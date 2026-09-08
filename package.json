@@ -1,0 +1,21 @@
+{
+  "name": "goodcommit",
+  "version": "1.0.0",
+  "description": "Turn vague commit messages into Conventional Commits using AI",
+  "main": "lib/goodcommit.js",
+  "bin": {
+    "goodcommit": "lib/goodcommit.js"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "conventional-commits",
+    "cli",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT"
+}
