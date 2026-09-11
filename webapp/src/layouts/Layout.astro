@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<meta
+			name="description"
+			content="Goodcommit turns vague commit messages into Conventional Commits with AI. Type a vague message, pick an option, commit."
+		/>
+		<title>Goodcommit — Consistent commits, zero effort</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--text: #111;
+		--muted: #555;
+		--faint: #888;
+		--accent: #1a7f37;
+		--mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', Menlo, Consolas,
+			'DejaVu Sans Mono', monospace;
+	}
+
+	html {
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	body {
+		margin: 0;
+		background: #fff;
+		color: var(--text);
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+			sans-serif;
+		font-size: 17px;
+		line-height: 1.6;
+	}
+
+	::selection {
+		background: rgba(26, 127, 55, 0.18);
+	}
+</style>
