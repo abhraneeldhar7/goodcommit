@@ -1,16 +1,16 @@
 {
-  "name": "goodcommit",
+  "name": "xommit",
   "version": "1.2",
-  "github": "https://github.com/abhraneeldhar7/goodcommit",
-  "website": "https://commit.antk.in",
+  "github": "https://github.com/abhraneeldhar7/xommit",
+  "website": "https://xommit.antk.in",
   "assets": {
-    "win32": "goodcommit-windows.exe",
-    "linux": "goodcommit-linux",
-    "darwin": "goodcommit-macos"
+    "win32": "xommit.exe",
+    "linux": "xommit",
+    "darwin": "xommit-macos"
   },
   "binaries": {
-    "win32": "goodcommit.exe",
-    "linux": "goodcommit",
-    "darwin": "goodcommit-macos"
+    "win32": "xommit.exe",
+    "linux": "xommit",
+    "darwin": "xommit-macos"
   }
 }

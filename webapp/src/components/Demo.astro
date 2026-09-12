@@ -157,7 +157,7 @@
 	async function typeCommand(s) {
 		const el = newLine();
 		addText(el, "$ ", "prompt");
-		const cmd = 'goodcommit "' + s.cmd + '"';
+		const cmd = 'xommit "' + s.cmd + '"';
 		for (let i = 0; i < cmd.length; i++) {
 			addText(el, cmd[i]);
 			setCaret(el);
@@ -259,7 +259,7 @@
 			if (si > 0) newLine();
 			const cmd = newLine();
 			addText(cmd, "$ ", "prompt");
-			addText(cmd, 'goodcommit "' + s.cmd + '"');
+			addText(cmd, 'xommit "' + s.cmd + '"');
 			const spin = newLine();
 			addText(spin, "  | Generating...", "spin");
 			s.options.forEach((opt, i) => {

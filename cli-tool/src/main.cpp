@@ -1,5 +1,5 @@
-#include "goodcommit/commands.h"
-#include "goodcommit/terminal_ui.h"
+#include "xommit/commands.h"
+#include "xommit/terminal_ui.h"
 
 #include <csignal>
 

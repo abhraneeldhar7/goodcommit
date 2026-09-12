@@ -7,30 +7,30 @@
 #include <cstdlib>
 #include <filesystem>
 
-#include "goodcommit/prompt.h"
-#include "goodcommit/json.h"
-#include "goodcommit/key_manager.h"
-#include "goodcommit/git_utils.h"
-#include "goodcommit/http_client.h"
-#include "goodcommit/terminal_ui.h"
+#include "xommit/prompt.h"
+#include "xommit/json.h"
+#include "xommit/key_manager.h"
+#include "xommit/git_utils.h"
+#include "xommit/http_client.h"
+#include "xommit/terminal_ui.h"
 
-#ifndef GOODCOMMIT_VERSION
-#define GOODCOMMIT_VERSION "1.0.0"
+#ifndef XOMMIT_VERSION
+#define XOMMIT_VERSION "1.0.0"
 #endif
-#ifndef GOODCOMMIT_GITHUB
-#define GOODCOMMIT_GITHUB "https://github.com/abhraneeldhar7/goodcommit"
+#ifndef XOMMIT_GITHUB
+#define XOMMIT_GITHUB "https://github.com/abhraneeldhar7/xommit"
 #endif
-#ifndef GOODCOMMIT_WEBSITE
-#define GOODCOMMIT_WEBSITE "https://commit.antk.in"
+#ifndef XOMMIT_WEBSITE
+#define XOMMIT_WEBSITE "https://xommit.antk.in"
 #endif
-#ifndef GOODCOMMIT_ASSET_WIN
-#define GOODCOMMIT_ASSET_WIN "goodcommit-windows.exe"
+#ifndef XOMMIT_ASSET_WIN
+#define XOMMIT_ASSET_WIN "xommit.exe"
 #endif
-#ifndef GOODCOMMIT_ASSET_LINUX
-#define GOODCOMMIT_ASSET_LINUX "goodcommit-linux"
+#ifndef XOMMIT_ASSET_LINUX
+#define XOMMIT_ASSET_LINUX "xommit"
 #endif
-#ifndef GOODCOMMIT_ASSET_MACOS
-#define GOODCOMMIT_ASSET_MACOS "goodcommit-macos"
+#ifndef XOMMIT_ASSET_MACOS
+#define XOMMIT_ASSET_MACOS "xommit-macos"
 #endif
 
 static std::string join(const std::vector<std::string> &v, const std::string &sep)
@@ -59,7 +59,7 @@ static std::string strip_quotes(const std::string &s)
 
 static bool is_dev_mode()
 {
-#ifdef GOODCOMMIT_DEV
+#ifdef XOMMIT_DEV
     return true;
 #else
     return false;
@@ -88,19 +88,19 @@ static int cmd_help()
               << std::flush;
 
     std::cout << "How to use:\n";
-    std::cout << BOLD_COLOR << "goodcommit" << DIM_COLOR << " <your_vague_message_here>\n ";
-    std::cout << "or just" << BOLD_COLOR << RESET_COLOR << " goodcommit" << "\n\n";
+    std::cout << BOLD_COLOR << "xommit" << DIM_COLOR << " <your_vague_message_here>\n ";
+    std::cout << "or just" << BOLD_COLOR << RESET_COLOR << " xommit" << "\n\n";
 
     // std::cout<<"(make sure you have some staged files)";
 
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --help" << RESET_COLOR << DIM_COLOR << "      show this tutorial\n";
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --connect" << RESET_COLOR << DIM_COLOR << "   paste your groq apikey (locally stored)\n";
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --reset" << RESET_COLOR << DIM_COLOR << "     remove groq apikey\n";
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --update" << RESET_COLOR << DIM_COLOR << "    download latest release from github\n";
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --version" << RESET_COLOR << DIM_COLOR << "   show version\n";
-    std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --test" << RESET_COLOR << DIM_COLOR << "      show spinner and 3 options to test arrow functionality\n\n";
-    std::cout << RESET_COLOR << "visit" << BOLD_COLOR << " \033]8;;" GOODCOMMIT_WEBSITE "\07commit.antk.in\033]8;;\07\n";
-    std::cout << RESET_COLOR << "repo" << BOLD_COLOR << " \033]8;;" GOODCOMMIT_GITHUB "\07github/goodcommit\033]8;;\07\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --help" << RESET_COLOR << DIM_COLOR << "      show this tutorial\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --connect" << RESET_COLOR << DIM_COLOR << "   paste your groq apikey (locally stored)\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --reset" << RESET_COLOR << DIM_COLOR << "     remove groq apikey\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --update" << RESET_COLOR << DIM_COLOR << "    download latest release from github\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --version" << RESET_COLOR << DIM_COLOR << "   show version\n";
+    std::cout << RESET_COLOR << "xommit" << HIGHLIGHT_COLOR << " --test" << RESET_COLOR << DIM_COLOR << "      show spinner and 3 options to test arrow functionality\n\n";
+    std::cout << RESET_COLOR << "visit" << BOLD_COLOR << " \033]8;;" XOMMIT_WEBSITE "\07xommit.antk.in\033]8;;\07\n";
+    std::cout << RESET_COLOR << "repo" << BOLD_COLOR << " \033]8;;" XOMMIT_GITHUB "\07github/xommit\033]8;;\07\n";
     std::cout << "\n\n";
     return 0;
 }
@@ -145,7 +145,7 @@ static int cmd_reset()
 
 static int cmd_version()
 {
-    std::cout << "goodcommit v" GOODCOMMIT_VERSION "\n";
+    std::cout << "xommit v" XOMMIT_VERSION "\n";
     return 0;
 }
 
@@ -159,7 +159,7 @@ static int cmd_update()
         return fail("Error: failed to get executable path");
     }
     std::string exe_path(buf, len);
-    std::string asset = GOODCOMMIT_ASSET_WIN;
+    std::string asset = XOMMIT_ASSET_WIN;
 #else
     char buf[4096];
     ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
@@ -170,16 +170,16 @@ static int cmd_update()
     buf[len] = '\0';
     std::string exe_path(buf);
 #ifdef __APPLE__
-    std::string asset = GOODCOMMIT_ASSET_MACOS;
+    std::string asset = XOMMIT_ASSET_MACOS;
 #else
-    std::string asset = GOODCOMMIT_ASSET_LINUX;
+    std::string asset = XOMMIT_ASSET_LINUX;
 #endif
 #endif
 
     std::string new_path = exe_path + ".new";
     std::string old_path = exe_path + ".old";
 
-    std::string url = GOODCOMMIT_GITHUB "/releases/latest/download/" + asset;
+    std::string url = XOMMIT_GITHUB "/releases/latest/download/" + asset;
 
     std::error_code ec;
     std::filesystem::remove(old_path, ec);

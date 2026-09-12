@@ -1,4 +1,4 @@
-# C++ Headers - include/goodcommit/
+# C++ Headers - include/xommit/
 
 This folder contains the C++ header files that implement the core logic.
 
@@ -45,7 +45,7 @@ Terminal user interface. Handles the spinner animation, arrow key selection, and
 These headers are compiled together with `src/main.cpp` to create the binary. The build command is:
 
 ```
-g++ -std=c++17 -O2 -I include -o bin/goodcommit src/main.cpp -lcurl
+g++ -std=c++17 -O2 -I include -o bin/xommit src/main.cpp -lcurl
 ```
 
 The `-I include` flag tells the compiler to look for headers in the `include/` directory.

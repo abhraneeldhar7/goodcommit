@@ -15,7 +15,7 @@
 #pragma comment(lib, "wininet.lib")
 
 static std::string http_post(const std::string& url, const std::string& body, const std::string& api_key) {
-    HINTERNET hSession = InternetOpenA("goodcommit/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+    HINTERNET hSession = InternetOpenA("xommit/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
     if (!hSession) throw std::runtime_error("InternetOpen failed");
 
     HINTERNET hConnect = InternetConnectA(hSession, "api.groq.com", INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
@@ -67,7 +67,7 @@ static bool http_download_file(const std::string& url, const std::string& out_pa
         path += std::string(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
     }
 
-    HINTERNET hSession = InternetOpenA("goodcommit/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+    HINTERNET hSession = InternetOpenA("xommit/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
     if (!hSession) return false;
 
     INTERNET_PORT port = urlComp.nScheme == INTERNET_SCHEME_HTTPS ? INTERNET_DEFAULT_HTTPS_PORT : INTERNET_DEFAULT_HTTP_PORT;

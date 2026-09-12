@@ -1,12 +1,12 @@
 {
-  "name": "goodcommit",
+  "name": "xommit",
   "version": "1.0.0",
   "description": "Turn vague commit messages into Conventional Commits using AI",
   "main": "scripts/index.js",
   "bin": {
-    "goodcommit": "scripts/index.js"
+    "xommit": "scripts/index.js"
   },
-  "files": ["scripts/index.js"],
+  "files": ["scripts/index.js", "config.json"],
   "scripts": {
     "build": "node scripts/build.js"
   },

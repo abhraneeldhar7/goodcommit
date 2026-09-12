@@ -9,11 +9,11 @@ static std::string get_key_path() {
 #ifdef _WIN32
     const char* appdata = std::getenv("APPDATA");
     if (!appdata) return "";
-    return (std::filesystem::path(appdata) / "goodcommit" / "key").string();
+    return (std::filesystem::path(appdata) / "xommit" / "key").string();
 #else
     const char* home = std::getenv("HOME");
     if (!home) return "";
-    return (std::filesystem::path(home) / ".config" / "goodcommit" / "key").string();
+    return (std::filesystem::path(home) / ".config" / "xommit" / "key").string();
 #endif
 }
 

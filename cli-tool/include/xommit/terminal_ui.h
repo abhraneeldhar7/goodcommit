@@ -38,7 +38,7 @@ static void enable_vt() {}
 
 #endif
 
-#define GOODCOMMIT_LOGO_LINES 10
+#define XOMMIT_LOGO_LINES 10
 
 static void print_logo()
 {
@@ -46,18 +46,19 @@ static void print_logo()
     const char *RESET_COLOR = "\033[0m";
 
     std::cout
-        << GIT_COLOR << "  ██████╗  ██████╗  ██████╗ ██████╗ " << RESET_COLOR << " ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗████████╗\n"
-        << GIT_COLOR << " ██╔════╝ ██╔═══██╗██╔═══██╗██╔══██╗" << RESET_COLOR << "██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║╚══██╔══╝\n"
-        << GIT_COLOR << " ██║  ███╗██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║   \n"
-        << GIT_COLOR << " ██║   ██║██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║   ██║   \n"
-        << GIT_COLOR << " ╚██████╔╝╚██████╔╝╚██████╔╝██████╔╝" << RESET_COLOR << "╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║   ██║   \n"
-        << GIT_COLOR << "  ╚═════╝  ╚═════╝  ╚═════╝ ╚═════╝ " << RESET_COLOR << " ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝   \n";
+        << GIT_COLOR << "██╗  ██╗  ██████╗  ███╗   ███╗ ███╗   ███╗ ██╗ ████████╗\n"
+        << GIT_COLOR << "╚██╗██╔╝ ██╔═══██╗ ████╗ ████║ ████╗ ████║ ██║ ╚══██╔══╝\n"
+        << GIT_COLOR << " ╚███╔╝  ██║   ██║ ██╔████╔██║ ██╔████╔██║ ██║    ██║   \n"
+        << GIT_COLOR << " ██╔██╗  ██║   ██║ ██║╚██╔╝██║ ██║╚██╔╝██║ ██║    ██║   \n"
+        << GIT_COLOR << "██╔╝ ██╗ ╚██████╔╝ ██║ ╚═╝ ██║ ██║ ╚═╝ ██║ ██║    ██║   \n"
+        << GIT_COLOR << "╚═╝  ╚═╝  ╚═════╝  ╚═╝     ╚═╝ ╚═╝     ╚═╝ ╚═╝    ╚═╝   \n"
+        << RESET_COLOR;
 }
 
 static void erase_logo(int tail_lines)
 {
-    int up = GOODCOMMIT_LOGO_LINES + tail_lines;
-    std::cout << "\033[" << up << "A\033[" << GOODCOMMIT_LOGO_LINES << "M\033[" << tail_lines << "B" << std::flush;
+    int up = XOMMIT_LOGO_LINES + tail_lines;
+    std::cout << "\033[" << up << "A\033[" << XOMMIT_LOGO_LINES << "M\033[" << tail_lines << "B" << std::flush;
 }
 
 static void print_exit_reason(const std::string &reason)
@@ -67,7 +68,7 @@ static void print_exit_reason(const std::string &reason)
 
 static void sig_handler(int)
 {
-    
+
     std::cout << "\033[?25h\n";
     print_exit_reason("ctrl+c");
     fflush(stdout);
@@ -84,14 +85,11 @@ static void spinner_func(const std::string &text)
 
     while (spinner_go)
     {
-        
+
         std::cout << "\r  " << frames[i] << " " << text << std::flush;
 
-        
         std::this_thread::sleep_for(std::chrono::milliseconds(80));
 
-        
-        
         i = (i + 1) % 4;
     }
 }
@@ -164,14 +162,16 @@ static int select_option(const std::vector<std::string> &options)
 
         if (ch == 3)
         {
-            std::cout << "\033[?25h\n" << std::flush;
+            std::cout << "\033[?25h\n"
+                      << std::flush;
             print_exit_reason("ctrl+c");
             return -1;
         }
 
         if (ch == 27)
         {
-            std::cout << "\033[?25h\n" << std::flush;
+            std::cout << "\033[?25h\n"
+                      << std::flush;
             print_exit_reason("esc");
             return -1;
         }
@@ -179,7 +179,8 @@ static int select_option(const std::vector<std::string> &options)
         if (ch == '\r' || ch == '\n')
         {
             std::cout << "\033[?25h" << std::flush;
-            std::cout << "\n" << std::flush;
+            std::cout << "\n"
+                      << std::flush;
             return selected;
         }
     }
@@ -191,17 +192,15 @@ static int select_option(const std::vector<std::string> &options)
 {
     int selected = 0;
 
-    
     struct termios orig_termios;
     tcgetattr(STDIN_FILENO, &orig_termios);
     struct termios raw = orig_termios;
-    raw.c_lflag &= ~(ECHO | ICANON | ISIG); 
-    raw.c_iflag &= ~(IXON);                 
-    raw.c_cc[VMIN] = 0;                     
-    raw.c_cc[VTIME] = 1;                    
+    raw.c_lflag &= ~(ECHO | ICANON | ISIG);
+    raw.c_iflag &= ~(IXON);
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 1;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
-    
     std::cout << "\033[?25l" << std::flush;
 
     int total_lines = (int)options.size() + 1;
@@ -209,14 +208,13 @@ static int select_option(const std::vector<std::string> &options)
 
     while (true)
     {
-        
+
         if (!first_draw)
         {
             std::cout << "\033[" << total_lines << "A\r";
         }
-        std::cout << "\033[J"; 
+        std::cout << "\033[J";
 
-        
         for (int i = 0; i < (int)options.size(); i++)
         {
             if (i == selected)
@@ -232,14 +230,13 @@ static int select_option(const std::vector<std::string> &options)
                   << std::flush;
         first_draw = false;
 
-        
         char c;
         if (read(STDIN_FILENO, &c, 1) != 1)
             continue;
 
         if (c == 27)
         {
-            
+
             char seq[2];
             if (read(STDIN_FILENO, &seq[0], 1) != 1)
             {
@@ -257,34 +254,33 @@ static int select_option(const std::vector<std::string> &options)
             {
                 if (seq[1] == 'A')
                 {
-                    
+
                     selected = (selected - 1 + (int)options.size()) % (int)options.size();
                 }
                 else if (seq[1] == 'B')
                 {
-                    
+
                     selected = (selected + 1) % (int)options.size();
                 }
             }
         }
         else if (c == 3)
         {
-            
-            std::cout << "\033[?25h\n"; 
+
+            std::cout << "\033[?25h\n";
             print_exit_reason("ctrl+c");
             tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
             return -1;
         }
         else if (c == '\r' || c == '\n')
         {
-            
-            std::cout << "\033[?25h"; 
+
+            std::cout << "\033[?25h";
             tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
             return selected;
         }
     }
 
-    
     std::cout << "\033[?25h";
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
     return -1;
@@ -307,7 +303,6 @@ static int select_option_numbered(const std::vector<std::string> &options)
     if (input.empty())
         return -1;
 
-    
     int choice = 0;
     for (char c : input)
     {
@@ -325,19 +320,16 @@ static void run_test()
 {
     enable_vt();
 
-    
     start_spinner("Testing loader... (press Enter to stop)");
     std::cout << "\n"
               << std::flush;
 
-    
     std::cout << "Press Enter to continue..." << std::flush;
     std::string buf;
     std::getline(std::cin, buf);
 
     stop_spinner();
 
-    
     std::vector<std::string> options = {"option 1", "option 2", "option 3"};
     int idx = select_option(options);
 
@@ -351,22 +343,42 @@ static void run_test()
 
 #ifdef _WIN32
 
-static std::string read_password() {
+static std::string read_password()
+{
     std::string key;
-    while (true) {
+    while (true)
+    {
         int ch = _getch();
-        if (ch == '\r' || ch == '\n') break;
-        if (ch == 3) { std::cout << "\n"; print_exit_reason("ctrl+c"); exit(130); }
-        if (ch == 27) { std::cout << "\n"; print_exit_reason("esc"); exit(130); }
-        if (ch == 8 || ch == 127) {
-            if (!key.empty()) {
+        if (ch == '\r' || ch == '\n')
+            break;
+        if (ch == 3)
+        {
+            std::cout << "\n";
+            print_exit_reason("ctrl+c");
+            exit(130);
+        }
+        if (ch == 27)
+        {
+            std::cout << "\n";
+            print_exit_reason("esc");
+            exit(130);
+        }
+        if (ch == 8 || ch == 127)
+        {
+            if (!key.empty())
+            {
                 key.pop_back();
                 std::cout << "\b \b" << std::flush;
             }
             continue;
         }
-        if (ch == 0 || ch == 224) { _getch(); continue; }
-        if (ch >= 32 && ch < 127) {
+        if (ch == 0 || ch == 224)
+        {
+            _getch();
+            continue;
+        }
+        if (ch >= 32 && ch < 127)
+        {
             key += (char)ch;
             std::cout << "*" << std::flush;
         }
@@ -376,7 +388,8 @@ static std::string read_password() {
 
 #else
 
-static std::string read_password() {
+static std::string read_password()
+{
     struct termios orig, raw;
     tcgetattr(STDIN_FILENO, &orig);
     raw = orig;
@@ -384,20 +397,38 @@ static std::string read_password() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
     std::string key;
-    while (true) {
+    while (true)
+    {
         char c;
-        if (read(STDIN_FILENO, &c, 1) != 1) continue;
-        if (c == '\n' || c == '\r') break;
-        if (c == 3) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); print_exit_reason("ctrl+c"); exit(130); }
-        if (c == 27) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); print_exit_reason("esc"); exit(130); }
-        if (c == 127 || c == 8) {
-            if (!key.empty()) {
+        if (read(STDIN_FILENO, &c, 1) != 1)
+            continue;
+        if (c == '\n' || c == '\r')
+            break;
+        if (c == 3)
+        {
+            std::cout << "\n";
+            tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig);
+            print_exit_reason("ctrl+c");
+            exit(130);
+        }
+        if (c == 27)
+        {
+            std::cout << "\n";
+            tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig);
+            print_exit_reason("esc");
+            exit(130);
+        }
+        if (c == 127 || c == 8)
+        {
+            if (!key.empty())
+            {
                 key.pop_back();
                 std::cout << "\b \b" << std::flush;
             }
             continue;
         }
-        if (c >= 32 && c < 127) {
+        if (c >= 32 && c < 127)
+        {
             key += c;
             std::cout << "*" << std::flush;
         }

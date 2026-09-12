@@ -38,7 +38,7 @@ function download() {
   console.error("Downloading " + asset + " from GitHub Releases...");
 
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { "User-Agent": "goodcommit" } }, (res) => {
+    https.get(url, { headers: { "User-Agent": "xommit" } }, (res) => {
       if (res.statusCode === 302 || res.statusCode === 301) {
         https.get(res.headers.location, (res2) => {
           const file = fs.createWriteStream(binary);

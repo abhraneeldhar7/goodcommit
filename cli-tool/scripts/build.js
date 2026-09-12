@@ -11,9 +11,9 @@
 //   npm run build
 //
 // Output:
-//   Windows: bin/goodcommit.exe
-//   Linux:   bin/goodcommit
-//   macOS:   bin/goodcommit-macos
+//   Windows: bin/xommit.exe
+//   Linux:   bin/xommit
+//   macOS:   bin/xommit-macos
 
 const { execFileSync } = require("child_process");
 const path = require("path");
@@ -57,19 +57,19 @@ if (platform === "win32") {
 }
 
 const defines = [
-  `-DGOODCOMMIT_VERSION="${config.version}"`,
-  `-DGOODCOMMIT_GITHUB="${config.github}"`,
-  `-DGOODCOMMIT_WEBSITE="${config.website}"`,
-  `-DGOODCOMMIT_ASSET_WIN="${config.assets.win32}"`,
-  `-DGOODCOMMIT_ASSET_LINUX="${config.assets.linux}"`,
-  `-DGOODCOMMIT_ASSET_MACOS="${config.assets.darwin}"`,
+  `-DXOMMIT_VERSION="${config.version}"`,
+  `-DXOMMIT_GITHUB="${config.github}"`,
+  `-DXOMMIT_WEBSITE="${config.website}"`,
+  `-DXOMMIT_ASSET_WIN="${config.assets.win32}"`,
+  `-DXOMMIT_ASSET_LINUX="${config.assets.linux}"`,
+  `-DXOMMIT_ASSET_MACOS="${config.assets.darwin}"`,
 ];
 
 // c++ version 20 might cause problem if your g++ is super old.
 const flags = ["-std=c++20", "-O2"];
 if (platform === "win32") flags.push("-static");
 flags.push(...defines);
-if (!release) flags.push("-D", "GOODCOMMIT_DEV");
+if (!release) flags.push("-D", "XOMMIT_DEV");
 
 const args = [...flags, "-I", includeDir, "-o", exe, ...sources, ...linkFlags];
 
@@ -77,7 +77,7 @@ const printable = [compiler, ...args]
   .map((a) => (a.includes(" ") ? `"${a}"` : a))
   .join(" ");
 
-console.log("Building goodcommit for " + platform + (release ? " (release)" : " (dev)") + "...");
+console.log("Building xommit for " + platform + (release ? " (release)" : " (dev)") + "...");
 console.log("> " + printable);
 console.log("");
 
