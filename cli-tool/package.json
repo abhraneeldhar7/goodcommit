@@ -1,8 +1,9 @@
 {
-  "name": "xommit",
-  "version": "1.0.0",
-  "description": "Turn vague commit messages into Conventional Commits using AI",
+  "name": "@abhraneeldhar7/xommit",
+  "version": "2.0.0",
+  "description": "Vague messages into Conventional Commits using AI",
   "main": "scripts/index.js",
+  "publishConfig": { "access": "public" },
   "bin": {
     "xommit": "scripts/index.js"
   },
