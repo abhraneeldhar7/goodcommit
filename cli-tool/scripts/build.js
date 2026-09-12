@@ -35,7 +35,7 @@ const sources = fs.readdirSync(srcDir)
 
 const platform = os.platform();
 // c++ version 20 might cause problem if your g++ is super old.
-const flags = "-std=c++20 -O2 -static";
+const flags = "-std=c++20 -O2 -static -D GOODCOMMIT_DEV";
 
 let compiler="g++", exe, linkFlags;
 

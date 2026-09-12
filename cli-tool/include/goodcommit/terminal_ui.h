@@ -38,10 +38,16 @@ static void enable_vt() {}
 
 #endif
 
+static void print_exit_reason(const std::string &reason)
+{
+    std::cout << "Exited with \033[2m" << reason << "\033[0m\n";
+}
+
 static void sig_handler(int)
 {
     
-    std::cout << "\033[?25h";
+    std::cout << "\033[?25h\n";
+    print_exit_reason("ctrl+c");
     fflush(stdout);
     exit(130);
 }
@@ -131,17 +137,20 @@ static int select_option(const std::vector<std::string> &options)
             {
                 selected = (selected + 1) % (int)options.size();
             }
-            else if (ch == 3 || ch == 27)
-            {
-                std::cout << "\033[?25h" << std::flush;
-                return -1;
-            }
             continue;
         }
 
-        if (ch == 3 || ch == 27)
+        if (ch == 3)
         {
-            std::cout << "\033[?25h" << std::flush;
+            std::cout << "\033[?25h\n" << std::flush;
+            print_exit_reason("ctrl+c");
+            return -1;
+        }
+
+        if (ch == 27)
+        {
+            std::cout << "\033[?25h\n" << std::flush;
+            print_exit_reason("esc");
             return -1;
         }
 
@@ -211,9 +220,17 @@ static int select_option(const std::vector<std::string> &options)
             
             char seq[2];
             if (read(STDIN_FILENO, &seq[0], 1) != 1)
+            {
+                std::cout << "\033[?25h\n";
+                print_exit_reason("esc");
                 break;
+            }
             if (read(STDIN_FILENO, &seq[1], 1) != 1)
+            {
+                std::cout << "\033[?25h\n";
+                print_exit_reason("esc");
                 break;
+            }
             if (seq[0] == '[')
             {
                 if (seq[1] == 'A')
@@ -231,7 +248,8 @@ static int select_option(const std::vector<std::string> &options)
         else if (c == 3)
         {
             
-            std::cout << "\033[?25h"; 
+            std::cout << "\033[?25h\n"; 
+            print_exit_reason("ctrl+c");
             tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
             return -1;
         }
@@ -303,7 +321,6 @@ static void run_test()
 
     if (idx == -1)
     {
-        std::cout << "\nCancelled.\n";
         return;
     }
 
@@ -317,7 +334,8 @@ static std::string read_password() {
     while (true) {
         int ch = _getch();
         if (ch == '\r' || ch == '\n') break;
-        if (ch == 3) { std::cout << "\n"; exit(130); }
+        if (ch == 3) { std::cout << "\n"; print_exit_reason("ctrl+c"); exit(130); }
+        if (ch == 27) { std::cout << "\n"; print_exit_reason("esc"); exit(130); }
         if (ch == 8 || ch == 127) {
             if (!key.empty()) {
                 key.pop_back();
@@ -348,7 +366,8 @@ static std::string read_password() {
         char c;
         if (read(STDIN_FILENO, &c, 1) != 1) continue;
         if (c == '\n' || c == '\r') break;
-        if (c == 3) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); exit(130); }
+        if (c == 3) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); print_exit_reason("ctrl+c"); exit(130); }
+        if (c == 27) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); print_exit_reason("esc"); exit(130); }
         if (c == 127 || c == 8) {
             if (!key.empty()) {
                 key.pop_back();

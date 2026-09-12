@@ -40,8 +40,20 @@ static std::string strip_quotes(const std::string &s)
 
 static bool is_dev_mode()
 {
-    const char *env = std::getenv("ENV");
-    return env && std::string(env) == "DEV";
+#ifdef GOODCOMMIT_DEV
+    return true;
+#else
+    return false;
+#endif
+}
+
+static int fail(const std::string &msg)
+{
+    const char *DIM_COLOR = "\033[2m";
+    const char *RESET_COLOR = "\033[0m";
+    std::cerr << msg << "\n";
+    std::cerr << DIM_COLOR << "Use --help for usage." << RESET_COLOR << "\n";
+    return 1;
 }
 
 static int cmd_help()
@@ -92,8 +104,7 @@ static int cmd_connect()
     }
     if (key.empty())
     {
-        std::cerr << "Error: key cannot be empty\n";
-        return 1;
+        return fail("Error: key cannot be empty");
     }
     if (store_key(key))
     {
@@ -101,8 +112,7 @@ static int cmd_connect()
     }
     else
     {
-        std::cerr << "Error: failed to save key\n";
-        return 1;
+        return fail("Error: failed to save key");
     }
     return 0;
 }
@@ -133,8 +143,7 @@ static int cmd_update()
     DWORD len = GetModuleFileNameA(NULL, buf, MAX_PATH);
     if (len == 0 || len >= MAX_PATH)
     {
-        std::cerr << "Error: failed to get executable path\n";
-        return 1;
+        return fail("Error: failed to get executable path");
     }
     std::string exe_path(buf, len);
     std::string asset = "goodcommit-windows.exe";
@@ -143,8 +152,7 @@ static int cmd_update()
     ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
     if (len <= 0)
     {
-        std::cerr << "Error: failed to get executable path\n";
-        return 1;
+        return fail("Error: failed to get executable path");
     }
     buf[len] = '\0';
     std::string exe_path(buf);
@@ -166,24 +174,21 @@ static int cmd_update()
     std::cout << "Downloading " << asset << "...\n";
     if (!http_download_file(url, new_path))
     {
-        std::cerr << "Error: download failed\n";
         std::filesystem::remove(new_path, ec);
-        return 1;
+        return fail("Error: download failed");
     }
 
     std::filesystem::rename(exe_path, old_path, ec);
     if (ec)
     {
-        std::cerr << "Error: failed to rename current binary\n";
         std::filesystem::remove(new_path, ec);
-        return 1;
+        return fail("Error: failed to rename current binary");
     }
 
     std::filesystem::rename(new_path, exe_path, ec);
     if (ec)
     {
-        std::cerr << "Error: failed to replace binary\n";
-        return 1;
+        return fail("Error: failed to replace binary");
     }
 
     std::cout << "Updated successfully!\n";
@@ -194,8 +199,7 @@ static int cmd_test()
 {
     if (!is_dev_mode())
     {
-        std::cerr << "Unknown command. Use --help for usage.\n";
-        return 1;
+        return fail("Unknown command: --test");
     }
     run_test();
     return 0;
@@ -206,15 +210,12 @@ static int cmd_generate(const std::vector<std::string> &args)
     std::string git_check = run_cmd("git rev-parse --is-inside-work-tree");
     if (trim(git_check) != "true")
     {
-        std::cerr << "Error: not a git repository. Run this inside a git repo.\n";
-        return 1;
+        return fail("Error: not a git repository. Run this inside a git repo.");
     }
 
     if (!has_staged_files())
     {
-        std::cerr << "Error: No staged files found.\n";
-        std::cerr << "Stage files first with: git add <files>\n";
-        return 1;
+        return fail("Error: No staged files found.\nStage files first with: git add <files>");
     }
 
     std::string api_key = read_stored_key();
@@ -268,16 +269,14 @@ static int cmd_generate(const std::vector<std::string> &args)
     catch (const std::exception &e)
     {
         stop_spinner();
-        std::cerr << "\nError calling Groq API: " << e.what() << "\n";
-        return 1;
+        return fail(std::string("Error calling Groq API: ") + e.what());
     }
 
     stop_spinner();
 
     if (response.find("\"error\"") != std::string::npos)
     {
-        std::cerr << response << "\n";
-        return 1;
+        return fail(response);
     }
 
     std::string content = extract_json_string(response, "content");
@@ -287,8 +286,7 @@ static int cmd_generate(const std::vector<std::string> &args)
     }
     if (content.empty())
     {
-        std::cerr << "\nError: Failed to extract response from API.\n";
-        return 1;
+        return fail("Error: Failed to extract response from API.");
     }
 
     std::vector<std::string> options = parse_options(content);
@@ -301,14 +299,12 @@ static int cmd_generate(const std::vector<std::string> &args)
 
     if (options.empty())
     {
-        std::cerr << "\nError: No valid options found.\n";
-        return 1;
+        return fail("Error: No valid options found.");
     }
 
     int idx = select_option(options);
     if (idx == -1)
     {
-        std::cerr << "\nInvalid selection.\n";
         return 1;
     }
 
@@ -316,8 +312,7 @@ static int cmd_generate(const std::vector<std::string> &args)
     int ret = do_commit(options[idx]);
     if (ret != 0)
     {
-        std::cerr << "git commit failed.\n";
-        return 1;
+        return fail("git commit failed.");
     }
     std::cout << "Done!\n";
     return 0;
@@ -331,11 +326,6 @@ static int dispatch(int argc, char *argv[])
     }
 
     std::string first = argv[1];
-
-    if (first == "-h")
-    {
-        return cmd_help();
-    }
 
     if (first.rfind("--", 0) == 0)
     {
@@ -352,9 +342,7 @@ static int dispatch(int argc, char *argv[])
             return cmd_update();
         if (cmd == "test")
             return cmd_test();
-        std::cerr << "Unknown command: " << first << "\n";
-        std::cerr << "Use --help for usage.\n";
-        return 1;
+        return fail("Unknown command: " + first);
     }
 
     std::vector<std::string> args;
