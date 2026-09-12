@@ -245,12 +245,11 @@ static int cmd_generate(const std::vector<std::string> &args)
     std::string msg_prefix;
     if (!message.empty())
     {
-        msg_prefix = "Vague commit message: " + message + "\n\n";
+        msg_prefix = "<UserPrompt>" + message + "</UserPrompt>\n\n";
     }
     msg_prefix += "Staged files (" + std::to_string(file_count) + " files):\n" + stat + "\n\n";
-    msg_prefix += "Diffs:\n";
 
-    int total_chars = 390000;
+    int total_chars = 260000;
     int safety = 5000;
     int overhead = (int)SYSTEM_PROMPT.size() + (int)msg_prefix.size() + 200;
     int diff_budget = total_chars - safety - overhead;
@@ -260,7 +259,7 @@ static int cmd_generate(const std::vector<std::string> &args)
     std::string diffs = get_staged_diffs(diff_budget);
     std::string user_content = msg_prefix + diffs;
 
-    std::string body = std::string("{\"model\":\"openai/gpt-oss-20b\",\"temperature\":0.3,\"max_tokens\":32768,\"messages\":[") + "{\"role\":\"system\",\"content\":\"" + json_escape(SYSTEM_PROMPT) + "\"}," + "{\"role\":\"user\",\"content\":\"" + json_escape(user_content) + "\"}" + "]}";
+    std::string body = std::string("{\"model\":\"openai/gpt-oss-20b\",\"temperature\":0.5,\"messages\":[") + "{\"role\":\"system\",\"content\":\"" + json_escape(SYSTEM_PROMPT) + "\"}," + "{\"role\":\"user\",\"content\":\"" + json_escape(user_content) + "\"}" + "]}";
 
     start_spinner("Generating...");
 

@@ -151,7 +151,7 @@ static std::string get_staged_diffs(int total_budget) {
     if ((int)total_diff_size <= total_budget) {
         std::string result;
         for (const auto& f : files) {
-            result += f.name + ":\n" + f.diff + "\n\n";
+            result += "<" + f.name + ">\n" + f.diff + "</" + f.name + ">\n\n";
         }
         return result;
     }
@@ -175,7 +175,7 @@ static std::string get_staged_diffs(int total_budget) {
         if ((int)diff.size() > file_budget) {
             diff = diff.substr(0, file_budget) + "\n[...truncated]";
         }
-        result += f.name + ":\n" + diff + "\n\n";
+        result += "<" + f.name + ">\n" + diff + "</" + f.name + ">\n\n";
     }
 
     return result;
