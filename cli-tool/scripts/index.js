@@ -10,21 +10,17 @@ const path = require("path");
 const fs = require("fs");
 const https = require("https");
 
-const REPO = "https://github.com/abhraneeldhar7/goodcommit/releases/latest/download";
+const config = require("../config.json");
+
+const REPO = config.github + "/releases/latest/download";
 
 // Find binary for platform
 const platform = process.platform;
 let binary, asset;
 
-if (platform === "win32") {
-  binary = path.join(__dirname, "..", "bin", "goodcommit.exe");
-  asset = "goodcommit-windows.exe";
-} else if (platform === "linux") {
-  binary = path.join(__dirname, "..", "bin", "goodcommit");
-  asset = "goodcommit-linux";
-} else if (platform === "darwin") {
-  binary = path.join(__dirname, "..", "bin", "goodcommit-macos");
-  asset = "goodcommit-macos";
+if (config.assets[platform]) {
+  binary = path.join(__dirname, "..", "bin", config.binaries[platform]);
+  asset = config.assets[platform];
 } else {
   console.error("Unsupported platform: " + platform);
   process.exit(1);

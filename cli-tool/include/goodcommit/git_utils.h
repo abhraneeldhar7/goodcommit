@@ -94,6 +94,45 @@ struct FileDiff {
     int lines;
 };
 
+static bool is_generated_file(const std::string& name) {
+    static const char* patterns[] = {
+        "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "composer.lock",
+        "Gemfile.lock", "Cargo.lock", "poetry.lock", "go.sum",
+        "node_modules/", ".min.js", ".min.css", ".map",
+    };
+    for (const char* p : patterns) {
+        if (name.find(p) != std::string::npos) return true;
+    }
+    return false;
+}
+
+static std::string clean_diff(const std::string& diff) {
+    std::string out;
+    size_t i = 0;
+    while (i < diff.size()) {
+        size_t line_end = diff.find('\n', i);
+        if (line_end == std::string::npos) line_end = diff.size();
+        std::string line = diff.substr(i, line_end - i);
+        bool keep = false;
+        if (line.rfind("@@", 0) == 0) keep = true;
+        else if (line.rfind("+++", 0) == 0) keep = false;
+        else if (line.rfind("---", 0) == 0) keep = false;
+        else if (line.rfind("+", 0) == 0) keep = true;
+        else if (line.rfind("-", 0) == 0) keep = true;
+        else if (line.rfind("new file mode", 0) == 0) keep = true;
+        else if (line.rfind("deleted file mode", 0) == 0) keep = true;
+        else if (line.rfind("rename from", 0) == 0) keep = true;
+        else if (line.rfind("rename to", 0) == 0) keep = true;
+        else if (line.rfind("Binary files", 0) == 0) keep = true;
+        if (keep) {
+            out += line;
+            out += '\n';
+        }
+        i = line_end + 1;
+    }
+    return out;
+}
+
 static std::vector<FileDiff> collect_file_diffs() {
     std::vector<FileDiff> files;
     std::string full_diff = run_cmd("git diff --cached");
@@ -108,7 +147,7 @@ static std::vector<FileDiff> collect_file_diffs() {
     while (i < full_diff.size()) {
         if (full_diff[i] == 'd' && full_diff.compare(i, 10, "diff --git ") == 0) {
             if (in_file && !current_file.empty()) {
-                files.push_back({current_file, current_diff, current_lines});
+                files.push_back({current_file, clean_diff(current_diff), current_lines});
             }
             size_t line_end = full_diff.find('\n', i);
             if (line_end == std::string::npos) line_end = full_diff.size();
@@ -133,49 +172,67 @@ static std::vector<FileDiff> collect_file_diffs() {
     }
 
     if (in_file && !current_file.empty()) {
-        files.push_back({current_file, current_diff, current_lines});
+        files.push_back({current_file, clean_diff(current_diff), current_lines});
     }
 
     return files;
 }
 
 static std::string get_staged_diffs(int total_budget) {
-    std::vector<FileDiff> files = collect_file_diffs();
-    if (files.empty()) return "";
+    std::vector<FileDiff> all = collect_file_diffs();
+    if (all.empty()) return "";
+
+    std::vector<FileDiff> files;
+    std::vector<std::string> generated;
+    for (const auto& f : all) {
+        if (is_generated_file(f.name)) generated.push_back(f.name);
+        else files.push_back(f);
+    }
+    if (files.empty()) {
+        files = all;
+        generated.clear();
+    }
 
     size_t total_diff_size = 0;
     for (const auto& f : files) {
         total_diff_size += f.diff.size();
     }
 
+    std::string result;
+
     if ((int)total_diff_size <= total_budget) {
-        std::string result;
         for (const auto& f : files) {
             result += "<" + f.name + ">\n" + f.diff + "</" + f.name + ">\n\n";
         }
-        return result;
+    } else {
+        int per_file_min = 400;
+        int remaining = total_budget;
+
+        for (size_t idx = 0; idx < files.size(); idx++) {
+            const auto& f = files[idx];
+            int file_budget;
+            if (idx == files.size() - 1) {
+                file_budget = remaining;
+            } else {
+                file_budget = (int)((double)total_budget * ((double)f.diff.size() / (double)total_diff_size));
+                if (file_budget < per_file_min) file_budget = per_file_min;
+            }
+            remaining -= file_budget;
+
+            std::string diff = f.diff;
+            if ((int)diff.size() > file_budget) {
+                size_t cut = diff.rfind('\n', (size_t)file_budget);
+                if (cut == std::string::npos) cut = (size_t)file_budget;
+                diff = diff.substr(0, cut) + "\n[...truncated]";
+            }
+            result += "<" + f.name + ">\n" + diff + "</" + f.name + ">\n\n";
+        }
     }
 
-    int per_file_min = 200;
-    int remaining = total_budget;
-    std::string result;
-
-    for (size_t idx = 0; idx < files.size(); idx++) {
-        const auto& f = files[idx];
-        int file_budget;
-        if (idx == files.size() - 1) {
-            file_budget = remaining;
-        } else {
-            file_budget = (int)((double)total_budget * ((double)f.diff.size() / (double)total_diff_size));
-            if (file_budget < per_file_min) file_budget = per_file_min;
-        }
-        remaining -= file_budget;
-
-        std::string diff = f.diff;
-        if ((int)diff.size() > file_budget) {
-            diff = diff.substr(0, file_budget) + "\n[...truncated]";
-        }
-        result += "<" + f.name + ">\n" + diff + "</" + f.name + ">\n\n";
+    if (!generated.empty()) {
+        result += "<GeneratedFiles>\n";
+        for (const auto& g : generated) result += g + "\n";
+        result += "</GeneratedFiles>\n\n";
     }
 
     return result;

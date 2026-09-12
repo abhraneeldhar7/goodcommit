@@ -12,16 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        include:
-          - os: windows-latest
-            binary: goodcommit.exe
-            asset: goodcommit-windows.exe
-          - os: ubuntu-latest
-            binary: goodcommit
-            asset: goodcommit-linux
-          - os: macos-latest
-            binary: goodcommit-macos
-            asset: goodcommit-macos
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -36,19 +27,21 @@ jobs:
         shell: bash
         run: |
           cd cli-tool
-          mkdir -p bin
-          SOURCES=$(find src -name "*.cpp" | tr "\n" " ")
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            g++ -std=c++20 -O2 -static -I include -o bin/${{ matrix.binary }} $SOURCES -lwininet -pthread
-          else
-            g++ -std=c++20 -O2 -I include -o bin/${{ matrix.binary }} $SOURCES -lcurl -pthread
-          fi
+          node scripts/build.js --release
+
+      - name: Resolve names
+        id: names
+        shell: bash
+        run: |
+          cd cli-tool
+          echo "binary=$(node -p "require('./config.json').binaries[process.platform]")" >> "$GITHUB_OUTPUT"
+          echo "asset=$(node -p "require('./config.json').assets[process.platform]")" >> "$GITHUB_OUTPUT"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset }}
-          path: cli-tool/bin/${{ matrix.binary }}
+          name: ${{ steps.names.outputs.asset }}
+          path: cli-tool/bin/${{ steps.names.outputs.binary }}
 
   release:
     needs: build
@@ -63,7 +56,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            artifacts/goodcommit-windows.exe/goodcommit.exe
-            artifacts/goodcommit-linux/goodcommit
-            artifacts/goodcommit-macos/goodcommit-macos
+          files: artifacts/*/*

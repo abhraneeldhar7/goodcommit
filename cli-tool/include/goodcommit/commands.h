@@ -14,6 +14,25 @@
 #include "goodcommit/http_client.h"
 #include "goodcommit/terminal_ui.h"
 
+#ifndef GOODCOMMIT_VERSION
+#define GOODCOMMIT_VERSION "1.0.0"
+#endif
+#ifndef GOODCOMMIT_GITHUB
+#define GOODCOMMIT_GITHUB "https://github.com/abhraneeldhar7/goodcommit"
+#endif
+#ifndef GOODCOMMIT_WEBSITE
+#define GOODCOMMIT_WEBSITE "https://commit.antk.in"
+#endif
+#ifndef GOODCOMMIT_ASSET_WIN
+#define GOODCOMMIT_ASSET_WIN "goodcommit-windows.exe"
+#endif
+#ifndef GOODCOMMIT_ASSET_LINUX
+#define GOODCOMMIT_ASSET_LINUX "goodcommit-linux"
+#endif
+#ifndef GOODCOMMIT_ASSET_MACOS
+#define GOODCOMMIT_ASSET_MACOS "goodcommit-macos"
+#endif
+
 static std::string join(const std::vector<std::string> &v, const std::string &sep)
 {
     std::string result;
@@ -86,8 +105,8 @@ static int cmd_help()
     std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --update" << RESET_COLOR << DIM_COLOR << "    download latest release from github\n";
     std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --version" << RESET_COLOR << DIM_COLOR << "   show version\n";
     std::cout << RESET_COLOR << "goodcommit" << HIGHLIGHT_COLOR << " --test" << RESET_COLOR << DIM_COLOR << "      show spinner and 3 options to test arrow functionality\n\n";
-    std::cout << RESET_COLOR << "visit" << BOLD_COLOR << " \033]8;;https://commit.antk.in\07commit.antk.in\033]8;;\07\n";
-    std::cout << RESET_COLOR << "repo" << BOLD_COLOR << " \033]8;;https://github.com/abhraneeldhar7/goodcommit\07github/goodcommit\033]8;;\07\n";
+    std::cout << RESET_COLOR << "visit" << BOLD_COLOR << " \033]8;;" GOODCOMMIT_WEBSITE "\07commit.antk.in\033]8;;\07\n";
+    std::cout << RESET_COLOR << "repo" << BOLD_COLOR << " \033]8;;" GOODCOMMIT_GITHUB "\07github/goodcommit\033]8;;\07\n";
     std::cout << "\n\n";
     return 0;
 }
@@ -132,7 +151,7 @@ static int cmd_reset()
 
 static int cmd_version()
 {
-    std::cout << "goodcommit v1.0.0\n";
+    std::cout << "goodcommit v" GOODCOMMIT_VERSION "\n";
     return 0;
 }
 
@@ -146,7 +165,7 @@ static int cmd_update()
         return fail("Error: failed to get executable path");
     }
     std::string exe_path(buf, len);
-    std::string asset = "goodcommit-windows.exe";
+    std::string asset = GOODCOMMIT_ASSET_WIN;
 #else
     char buf[4096];
     ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
@@ -157,16 +176,16 @@ static int cmd_update()
     buf[len] = '\0';
     std::string exe_path(buf);
 #ifdef __APPLE__
-    std::string asset = "goodcommit-macos";
+    std::string asset = GOODCOMMIT_ASSET_MACOS;
 #else
-    std::string asset = "goodcommit-linux";
+    std::string asset = GOODCOMMIT_ASSET_LINUX;
 #endif
 #endif
 
     std::string new_path = exe_path + ".new";
     std::string old_path = exe_path + ".old";
 
-    std::string url = "https://github.com/abhraneeldhar7/goodcommit/releases/latest/download/" + asset;
+    std::string url = GOODCOMMIT_GITHUB "/releases/latest/download/" + asset;
 
     std::error_code ec;
     std::filesystem::remove(old_path, ec);
@@ -222,7 +241,15 @@ static int cmd_generate(const std::vector<std::string> &args)
     if (api_key.empty())
     {
         std::cout << "No API key found.\n";
-        return cmd_connect();
+        if (cmd_connect() != 0)
+        {
+            return 1;
+        }
+        api_key = read_stored_key();
+        if (api_key.empty())
+        {
+            return fail("Error: key was not saved");
+        }
     }
 
     std::string message = strip_quotes(join(args, " "));
@@ -247,7 +274,7 @@ static int cmd_generate(const std::vector<std::string> &args)
     }
     msg_prefix += "Staged files (" + std::to_string(file_count) + " files):\n" + stat + "\n\n";
 
-    int total_chars = 260000;
+    int total_chars = 120000;
     int safety = 5000;
     int overhead = (int)SYSTEM_PROMPT.size() + (int)msg_prefix.size() + 200;
     int diff_budget = total_chars - safety - overhead;
@@ -257,7 +284,7 @@ static int cmd_generate(const std::vector<std::string> &args)
     std::string diffs = get_staged_diffs(diff_budget);
     std::string user_content = msg_prefix + diffs;
 
-    std::string body = std::string("{\"model\":\"openai/gpt-oss-20b\",\"temperature\":0.5,\"messages\":[") + "{\"role\":\"system\",\"content\":\"" + json_escape(SYSTEM_PROMPT) + "\"}," + "{\"role\":\"user\",\"content\":\"" + json_escape(user_content) + "\"}" + "]}";
+    std::string body = std::string("{\"model\":\"openai/gpt-oss-120b\",\"temperature\":0.3,\"top_p\":0.9,\"messages\":[") + "{\"role\":\"system\",\"content\":\"" + json_escape(SYSTEM_PROMPT) + "\"}," + "{\"role\":\"user\",\"content\":\"" + json_escape(user_content) + "\"}" + "]}";
 
     start_spinner("Generating...");
 

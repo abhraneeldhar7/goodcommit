@@ -7,6 +7,7 @@
 //
 // Usage:
 //   node scripts/build.js
+//   node scripts/build.js --release
 //   npm run build
 //
 // Output:
@@ -14,14 +15,18 @@
 //   Linux:   bin/goodcommit
 //   macOS:   bin/goodcommit-macos
 
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 
+const config = require("../config.json");
+
 const srcDir = path.join(__dirname, "..", "src");
 const includeDir = path.join(__dirname, "..", "include");
 const binDir = path.join(__dirname, "..", "bin");
+
+const release = process.argv.includes("--release");
 
 // Create bin directory if it doesn't exist
 if (!fs.existsSync(binDir)) {
@@ -34,35 +39,50 @@ const sources = fs.readdirSync(srcDir)
   .map((f) => path.join(srcDir, f));
 
 const platform = os.platform();
-// c++ version 20 might cause problem if your g++ is super old.
-const flags = "-std=c++20 -O2 -static -D GOODCOMMIT_DEV";
 
-let compiler="g++", exe, linkFlags;
+let compiler = "g++", exe, linkFlags;
 
 if (platform === "win32") {
-  exe = path.join(binDir, "goodcommit.exe");
-  linkFlags = "-lwininet -pthread";
+  exe = path.join(binDir, config.binaries.win32);
+  linkFlags = ["-lwininet", "-pthread"];
 } else if (platform === "linux") {
-  exe = path.join(binDir, "goodcommit");
-  linkFlags = "-lcurl -pthread";
+  exe = path.join(binDir, config.binaries.linux);
+  linkFlags = ["-lcurl", "-pthread"];
 } else if (platform === "darwin") {
-  exe = path.join(binDir, "goodcommit-macos");
-  linkFlags = "-lcurl -pthread";
+  exe = path.join(binDir, config.binaries.darwin);
+  linkFlags = ["-lcurl", "-pthread"];
 } else {
   console.error("Unsupported platform: " + platform);
   process.exit(1);
 }
 
-// Build the g++ command
-// -I includeDir tells the compiler where to find our header files
-const cmd = `"${compiler}" ${flags} -I "${includeDir}" -o "${exe}" ${sources.map((s) => '"' + s + '"').join(" ")} ${linkFlags}`;
+const defines = [
+  `-DGOODCOMMIT_VERSION="${config.version}"`,
+  `-DGOODCOMMIT_GITHUB="${config.github}"`,
+  `-DGOODCOMMIT_WEBSITE="${config.website}"`,
+  `-DGOODCOMMIT_ASSET_WIN="${config.assets.win32}"`,
+  `-DGOODCOMMIT_ASSET_LINUX="${config.assets.linux}"`,
+  `-DGOODCOMMIT_ASSET_MACOS="${config.assets.darwin}"`,
+];
 
-console.log("Building goodcommit for " + platform + "...");
-console.log("> " + cmd);
+// c++ version 20 might cause problem if your g++ is super old.
+const flags = ["-std=c++20", "-O2"];
+if (platform === "win32") flags.push("-static");
+flags.push(...defines);
+if (!release) flags.push("-D", "GOODCOMMIT_DEV");
+
+const args = [...flags, "-I", includeDir, "-o", exe, ...sources, ...linkFlags];
+
+const printable = [compiler, ...args]
+  .map((a) => (a.includes(" ") ? `"${a}"` : a))
+  .join(" ");
+
+console.log("Building goodcommit for " + platform + (release ? " (release)" : " (dev)") + "...");
+console.log("> " + printable);
 console.log("");
 
 try {
-  execSync(cmd, { stdio: "inherit", cwd: __dirname });
+  execFileSync(compiler, args, { stdio: "inherit", cwd: __dirname });
   console.log("");
   console.log("Build successful: " + exe);
 
