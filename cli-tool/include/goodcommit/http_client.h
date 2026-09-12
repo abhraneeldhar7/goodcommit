@@ -91,6 +91,13 @@ static bool http_download_file(const std::string& url, const std::string& out_pa
         return false;
     }
 
+    DWORD status = 0;
+    DWORD status_size = sizeof(status);
+    if (!HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &status, &status_size, NULL) || status != 200) {
+        InternetCloseHandle(hRequest); InternetCloseHandle(hConnect); InternetCloseHandle(hSession);
+        return false;
+    }
+
     FILE* fp = fopen(out_path.c_str(), "wb");
     if (!fp) { InternetCloseHandle(hRequest); InternetCloseHandle(hConnect); InternetCloseHandle(hSession); return false; }
 
@@ -159,12 +166,15 @@ static bool http_download_file(const std::string& url, const std::string& out_pa
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
 
     CURLcode res = curl_easy_perform(curl);
+    long code = 0;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
     curl_easy_cleanup(curl);
     fclose(fp);
 
-    return res == CURLE_OK;
+    return res == CURLE_OK && code == 200;
 }
 
 #endif

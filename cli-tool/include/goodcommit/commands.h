@@ -79,19 +79,13 @@ static int cmd_help()
 {
     const char *BOLD_COLOR = "\033[1m";
     const char *DIM_COLOR = "\033[2m";
-    const char *GIT_COLOR = "\033[38;2;241;78;50m";
     const char *HIGHLIGHT_COLOR = "\033[1;32m";
     const char *RESET_COLOR = "\033[0m";
 
-    std::cout
-        << "\n\n"
-        << GIT_COLOR << "  ██████╗  ██████╗  ██████╗ ██████╗ " << RESET_COLOR << " ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗████████╗\n"
-        << GIT_COLOR << " ██╔════╝ ██╔═══██╗██╔═══██╗██╔══██╗" << RESET_COLOR << "██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║╚══██╔══╝\n"
-        << GIT_COLOR << " ██║  ███╗██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║   \n"
-        << GIT_COLOR << " ██║   ██║██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║   ██║   \n"
-        << GIT_COLOR << " ╚██████╔╝╚██████╔╝╚██████╔╝██████╔╝" << RESET_COLOR << "╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║   ██║   \n"
-        << GIT_COLOR << "  ╚═════╝  ╚═════╝  ╚═════╝ ╚═════╝ " << RESET_COLOR << " ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝   \n"
-        << "\n\n";
+    std::cout << "\n\n";
+    print_logo();
+    std::cout << "\n\n"
+              << std::flush;
 
     std::cout << "How to use:\n";
     std::cout << BOLD_COLOR << "goodcommit" << DIM_COLOR << " <your_vague_message_here>\n ";
@@ -197,6 +191,14 @@ static int cmd_update()
         return fail("Error: download failed");
     }
 
+    std::error_code size_ec;
+    auto dl_size = std::filesystem::file_size(new_path, size_ec);
+    if (size_ec || dl_size < 100000)
+    {
+        std::filesystem::remove(new_path, ec);
+        return fail("Error: downloaded file looks invalid");
+    }
+
     std::filesystem::rename(exe_path, old_path, ec);
     if (ec)
     {
@@ -286,6 +288,11 @@ static int cmd_generate(const std::vector<std::string> &args)
 
     std::string body = std::string("{\"model\":\"openai/gpt-oss-120b\",\"temperature\":0.3,\"top_p\":0.9,\"messages\":[") + "{\"role\":\"system\",\"content\":\"" + json_escape(SYSTEM_PROMPT) + "\"}," + "{\"role\":\"user\",\"content\":\"" + json_escape(user_content) + "\"}" + "]}";
 
+    std::cout << "\n\n";
+    print_logo();
+    std::cout << "\n\n"
+              << std::flush;
+
     start_spinner("Generating...");
 
     std::string response;
@@ -330,6 +337,12 @@ static int cmd_generate(const std::vector<std::string> &args)
     }
 
     int idx = select_option(options);
+#ifdef _WIN32
+    erase_logo((int)options.size() + (idx == -1 ? 3 : 2));
+#else
+    erase_logo((int)options.size() + (idx == -1 ? 3 : 1));
+#endif
+
     if (idx == -1)
     {
         return 1;

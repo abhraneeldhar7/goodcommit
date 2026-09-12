@@ -38,6 +38,29 @@ static void enable_vt() {}
 
 #endif
 
+#define GOODCOMMIT_LOGO_LINES 6
+
+static void print_logo()
+{
+    const char *GIT_COLOR = "\033[38;2;241;78;50m";
+    const char *RESET_COLOR = "\033[0m";
+
+    std::cout
+        << GIT_COLOR << "  ██████╗  ██████╗  ██████╗ ██████╗ " << RESET_COLOR << " ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗████████╗\n"
+        << GIT_COLOR << " ██╔════╝ ██╔═══██╗██╔═══██╗██╔══██╗" << RESET_COLOR << "██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║╚══██╔══╝\n"
+        << GIT_COLOR << " ██║  ███╗██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║   \n"
+        << GIT_COLOR << " ██║   ██║██║   ██║██║   ██║██║  ██║" << RESET_COLOR << "██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║   ██║   \n"
+        << GIT_COLOR << " ╚██████╔╝╚██████╔╝╚██████╔╝██████╔╝" << RESET_COLOR << "╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║   ██║   \n"
+        << GIT_COLOR << "  ╚═════╝  ╚═════╝  ╚═════╝ ╚═════╝ " << RESET_COLOR << " ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝   ╚═╝   \n";
+}
+
+static void erase_logo(int tail_lines)
+{
+    int up = 8 + tail_lines;
+    int down = tail_lines + 2;
+    std::cout << "\033[" << up << "A\033[" << GOODCOMMIT_LOGO_LINES << "M\033[" << down << "B" << std::flush;
+}
+
 static void print_exit_reason(const std::string &reason)
 {
     std::cout << "Exited with \033[2m" << reason << "\033[0m\n";
