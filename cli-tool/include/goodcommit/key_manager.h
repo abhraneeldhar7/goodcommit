@@ -51,8 +51,7 @@ static bool store_key(const std::string& key) {
     f << key << "\n";
     f.close();
 
-#ifndef _WIN32
-    
+#ifndef _WIN32    
     std::filesystem::permissions(path,
         std::filesystem::perms::owner_read | std::filesystem::perms::owner_write,
         std::filesystem::perm_options::replace);

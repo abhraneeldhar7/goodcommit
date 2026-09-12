@@ -22,6 +22,7 @@
 
 static void enable_vt()
 {
+    SetConsoleOutputCP(CP_UTF8);
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     if (h == INVALID_HANDLE_VALUE)
         return;

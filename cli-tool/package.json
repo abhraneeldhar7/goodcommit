@@ -2,11 +2,11 @@
   "name": "goodcommit",
   "version": "1.0.0",
   "description": "Turn vague commit messages into Conventional Commits using AI",
-  "main": "lib/index.js",
+  "main": "scripts/index.js",
   "bin": {
-    "goodcommit": "lib/index.js"
+    "goodcommit": "scripts/index.js"
   },
-  "files": ["lib/index.js"],
+  "files": ["scripts/index.js"],
   "scripts": {
     "build": "node scripts/build.js"
   },

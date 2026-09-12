@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// lib/index.js - npm shim
+// scripts/index.js - npm shim
 //
 // Finds the C++ binary, downloads it from GitHub Releases if missing,
 // then forwards all args to it.

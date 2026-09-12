@@ -49,6 +49,65 @@ static std::string http_post(const std::string& url, const std::string& body, co
     return response;
 }
 
+static bool http_download_file(const std::string& url, const std::string& out_path) {
+    URL_COMPONENTSA urlComp = {};
+    urlComp.dwStructSize = sizeof(urlComp);
+    urlComp.dwSchemeLength = 1;
+    urlComp.dwHostNameLength = 1;
+    urlComp.dwUrlPathLength = 1;
+    urlComp.dwExtraInfoLength = 1;
+
+    if (!InternetCrackUrlA(url.c_str(), (DWORD)url.size(), 0, &urlComp)) {
+        return false;
+    }
+
+    std::string host(urlComp.lpszHostName, urlComp.dwHostNameLength);
+    std::string path(urlComp.lpszUrlPath, urlComp.dwUrlPathLength);
+    if (urlComp.dwExtraInfoLength > 0) {
+        path += std::string(urlComp.lpszExtraInfo, urlComp.dwExtraInfoLength);
+    }
+
+    HINTERNET hSession = InternetOpenA("goodcommit/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+    if (!hSession) return false;
+
+    INTERNET_PORT port = urlComp.nScheme == INTERNET_SCHEME_HTTPS ? INTERNET_DEFAULT_HTTPS_PORT : INTERNET_DEFAULT_HTTP_PORT;
+    HINTERNET hConnect = InternetConnectA(hSession, host.c_str(), port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+    if (!hConnect) { InternetCloseHandle(hSession); return false; }
+
+    const char* accept_types[] = { "*/*", NULL };
+    DWORD flags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE;
+    if (urlComp.nScheme == INTERNET_SCHEME_HTTPS) flags |= INTERNET_FLAG_SECURE;
+
+    HINTERNET hRequest = HttpOpenRequestA(hConnect, "GET", path.c_str(), NULL, NULL, accept_types, flags, 0);
+    if (!hRequest) { InternetCloseHandle(hConnect); InternetCloseHandle(hSession); return false; }
+
+    if (urlComp.nScheme == INTERNET_SCHEME_HTTPS) {
+        DWORD sec_flags = SECURITY_FLAG_IGNORE_UNKNOWN_CA | SECURITY_FLAG_IGNORE_CERT_DATE_INVALID | SECURITY_FLAG_IGNORE_CERT_CN_INVALID;
+        InternetSetOptionA(hRequest, INTERNET_OPTION_SECURITY_FLAGS, &sec_flags, sizeof(sec_flags));
+    }
+
+    if (!HttpSendRequestA(hRequest, NULL, 0, NULL, 0)) {
+        InternetCloseHandle(hRequest); InternetCloseHandle(hConnect); InternetCloseHandle(hSession);
+        return false;
+    }
+
+    FILE* fp = fopen(out_path.c_str(), "wb");
+    if (!fp) { InternetCloseHandle(hRequest); InternetCloseHandle(hConnect); InternetCloseHandle(hSession); return false; }
+
+    char buf[4096];
+    DWORD bytes_read = 0;
+    while (InternetReadFile(hRequest, buf, sizeof(buf), &bytes_read) && bytes_read > 0) {
+        fwrite(buf, 1, bytes_read, fp);
+        bytes_read = 0;
+    }
+
+    fclose(fp);
+    InternetCloseHandle(hRequest);
+    InternetCloseHandle(hConnect);
+    InternetCloseHandle(hSession);
+    return true;
+}
+
 #else
 
 #include <curl/curl.h>
@@ -88,6 +147,24 @@ static std::string http_post(const std::string& url, const std::string& body, co
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
     return response;
+}
+
+static bool http_download_file(const std::string& url, const std::string& out_path) {
+    CURL* curl = curl_easy_init();
+    if (!curl) return false;
+
+    FILE* fp = fopen(out_path.c_str(), "wb");
+    if (!fp) { curl_easy_cleanup(curl); return false; }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    fclose(fp);
+
+    return res == CURLE_OK;
 }
 
 #endif

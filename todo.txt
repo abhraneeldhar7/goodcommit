@@ -1,0 +1,64 @@
+how to maintain environment? like I want to put env=DEV in my laptop . and if its missing then it means its in production. (I am hoping to treat this as .env file like in npm projects) but you must follow proper cpp project rules. so when we are in DEV env then add a parameter option in the tool --test which shows the exact loader (so make it reusable UI) with exact text so I can customize and debug without commiting all the time, and this shows until I press enter, after that show 3 options (with the reusable UI so I can debug) "option 1" "option 2" "option 3" so I can test out the arrow keys, then select anything and hit enter to end this.
+
+
+is this thing installable for anyone in windows, linux, macos. with or without node?
+
+
+
+how ai was used for this project.
+I'm inspired by the black magic @ruben does on twitter. Wanted to move past the dsa questions, so used AI to set-up the skeleton and iterated over it. I'm using this project to learn cpp in-depth, wanted to share a cool tool.
+
+
+
+
+
+
+  Written in cpp | 3mb	githublogo	install
+
+Consistent commits
+zero effort
+
+live example
+
+3mb
+total app size
+
+Install goodcommit
+set-up free groq account
+// this should query for latest free models and select first one.
+
+npm | curl | manual
+
+Commands:
+Just start typing
+goodcommit asdasdasdasdasdasd
+	just "goodcommit" works just fine
+
+Connect, etc
+
+
+How AI was used in this project.
+I'm inspired by the black magic @ruben does on twitter. Wanted to move past the dsa questions, so used AI to set-up the skeleton and iterated over it. I'm using this project to learn cpp in-depth, wanted to share a cool tool.
+
+
+
+_---_____-_-_-_-_-_--_--_--__-__
+
+
+commands changes:
+nothing: just generate
+--help: show tutorial on like create apitoken in groq then goodcommit --connect and paste. then all the command things.
+--connect: "Paste your groq apikey (locally stored)" groq apikey update
+--reset: remove groq apikey
+--update: download from release and replace old file
+--version: say verison
+--test: show spinner and 3 options for me to test arrow functionality.
+
+remove rest all commands.
+
+
+
+
+------------
+
+index.js and install.sh should first check if you have git installed. if not tell to download from "https://git-scm.com/install/"
