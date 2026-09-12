@@ -310,4 +310,61 @@ static void run_test()
     std::cout << "\nSelected: " << options[idx] << "\n";
 }
 
+#ifdef _WIN32
+
+static std::string read_password() {
+    std::string key;
+    while (true) {
+        int ch = _getch();
+        if (ch == '\r' || ch == '\n') break;
+        if (ch == 3) { std::cout << "\n"; exit(130); }
+        if (ch == 8 || ch == 127) {
+            if (!key.empty()) {
+                key.pop_back();
+                std::cout << "\b \b" << std::flush;
+            }
+            continue;
+        }
+        if (ch == 0 || ch == 224) { _getch(); continue; }
+        if (ch >= 32 && ch < 127) {
+            key += (char)ch;
+            std::cout << "*" << std::flush;
+        }
+    }
+    return key;
+}
+
+#else
+
+static std::string read_password() {
+    struct termios orig, raw;
+    tcgetattr(STDIN_FILENO, &orig);
+    raw = orig;
+    raw.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
+    std::string key;
+    while (true) {
+        char c;
+        if (read(STDIN_FILENO, &c, 1) != 1) continue;
+        if (c == '\n' || c == '\r') break;
+        if (c == 3) { std::cout << "\n"; tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig); exit(130); }
+        if (c == 127 || c == 8) {
+            if (!key.empty()) {
+                key.pop_back();
+                std::cout << "\b \b" << std::flush;
+            }
+            continue;
+        }
+        if (c >= 32 && c < 127) {
+            key += c;
+            std::cout << "*" << std::flush;
+        }
+    }
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig);
+    return key;
+}
+
+#endif
+
 #endif

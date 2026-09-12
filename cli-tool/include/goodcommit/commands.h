@@ -83,12 +83,9 @@ static int cmd_help()
 static int cmd_connect()
 {
     std::cout << "Paste your groq apikey (locally stored): " << std::flush;
-    std::string key;
-    if (!std::getline(std::cin, key))
-    {
-        std::cerr << "Error: failed to read input\n";
-        return 1;
-    }
+    std::string key = read_password();
+    std::cout << "\r\033[2K" << std::flush;
+
     while (!key.empty() && (key.back() == '\n' || key.back() == '\r' || key.back() == ' '))
     {
         key.pop_back();
@@ -100,7 +97,7 @@ static int cmd_connect()
     }
     if (store_key(key))
     {
-        std::cout << "Key saved.\n";
+        std::cout << "Key saved\n";
     }
     else
     {
