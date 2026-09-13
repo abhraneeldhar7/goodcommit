@@ -27,7 +27,7 @@ export default function InstallSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-1.5 items-center sticky top-[55px] z-15 bg-background py-1">
+      <div className="flex gap-1.5 items-center sticky top-[57px] sm:top-[50px] z-15 bg-background py-1">
         {TABS.map((tab, index) => (
           <button
             key={index}
