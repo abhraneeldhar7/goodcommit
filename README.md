@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/assets/heroImg.png" alt="XOMMIT - conventional commits, zero effort" width="760">
+  <img src="/assets/heroImg.png" alt="XOMMIT - conventional commits, zero effort" width="760">
 </p>
 
 <h1 align="center">xommit</h1>
