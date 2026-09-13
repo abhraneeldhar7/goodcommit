@@ -7,7 +7,7 @@
 # and installs it to /usr/local/bin.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/cli-tool/scripts/install.sh | bash
 #
 # What it does:
 #   1. Detects your OS (Linux/macOS) and architecture (x64/arm64)

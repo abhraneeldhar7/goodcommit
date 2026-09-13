@@ -43,7 +43,7 @@ Needs [Node.js](https://nodejs.org/) installed.
 **curl** (macOS, Linux)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/cli-tool/scripts/install.sh | bash
 ```
 
 Downloads the standalone binary to `/usr/local/bin`.
@@ -51,7 +51,7 @@ Downloads the standalone binary to `/usr/local/bin`.
 **PowerShell** (Windows)
 
 ```powershell
-irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/cli-tool/scripts/install.ps1 | iex
 ```
 
 Installs `xommit.exe` to `%LOCALAPPDATA%\Programs\xommit` and adds it to your PATH. Restart your terminal after.

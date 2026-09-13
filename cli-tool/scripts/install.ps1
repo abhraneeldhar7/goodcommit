@@ -1,7 +1,7 @@
 # scripts/install.ps1 - Windows installer
 #
 # Usage:
-#   irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/cli-tool/scripts/install.ps1 | iex
 
 $ErrorActionPreference = "Stop"
 

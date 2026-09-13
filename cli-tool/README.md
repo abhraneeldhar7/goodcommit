@@ -1,4 +1,4 @@
-![XOMMIT - conventional commits, zero effort](https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/assets/heroImg.png)
+![XOMMIT - conventional commits, zero effort](https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/assets/heroImg.png)
 
 # xommit
 

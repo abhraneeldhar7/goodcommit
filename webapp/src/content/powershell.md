@@ -1,7 +1,7 @@
 Works on **Windows** (PowerShell 5.1+). Needs `git` installed.
 
 ```powershell
-irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/master/cli-tool/scripts/install.ps1 | iex
 ```
 
 What it does:

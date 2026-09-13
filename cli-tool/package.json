@@ -1,6 +1,6 @@
 {
   "name": "@abhraneeldhar7/xommit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vague messages into Conventional Commits using AI",
   "keywords": [
     "git",
@@ -37,7 +37,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "release": "node scripts/release.js"
   },
   "publishConfig": {
     "access": "public"

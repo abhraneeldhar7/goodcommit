@@ -199,6 +199,12 @@ static int cmd_update()
         return fail("Error: downloaded file looks invalid");
     }
 
+#ifndef _WIN32
+    std::filesystem::permissions(new_path,
+                                 std::filesystem::perms::owner_exec | std::filesystem::perms::group_exec | std::filesystem::perms::others_exec,
+                                 std::filesystem::perm_options::add, ec);
+#endif
+
     std::filesystem::rename(exe_path, old_path, ec);
     if (ec)
     {
