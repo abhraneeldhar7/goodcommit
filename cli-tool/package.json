@@ -1,23 +1,45 @@
 {
   "name": "@abhraneeldhar7/xommit",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Vague messages into Conventional Commits using AI",
-  "main": "scripts/index.js",
-  "publishConfig": { "access": "public" },
-  "bin": {
-    "xommit": "scripts/index.js"
-  },
-  "files": ["scripts/index.js", "config.json"],
-  "scripts": {
-    "build": "node scripts/build.js"
-  },
   "keywords": [
     "git",
     "commit",
     "conventional-commits",
     "cli",
-    "ai"
+    "ai",
+    "groq"
   ],
-  "author": "abhraneeldhar@gmail.com",
-  "license": "MIT"
+  "homepage": "https://xommit.antk.in",
+  "bugs": {
+    "url": "https://github.com/abhraneeldhar7/xommit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhraneeldhar7/xommit.git",
+    "directory": "cli-tool"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "abhraneel",
+    "email": "abhraneeldhar@gmail.com",
+    "url": "https://x.com/veryNeel"
+  },
+  "main": "scripts/index.js",
+  "bin": {
+    "xommit": "scripts/index.js"
+  },
+  "files": [
+    "scripts/index.js",
+    "config.json"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

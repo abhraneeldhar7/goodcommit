@@ -11,8 +11,9 @@ const fs = require("fs");
 const https = require("https");
 
 const config = require("../config.json");
+const pkg = require("../package.json");
 
-const REPO = config.github + "/releases/latest/download";
+const REPO = config.github + "/releases/download/v" + pkg.version;
 
 // Find binary for platform
 const platform = process.platform;

@@ -6,6 +6,8 @@ import GithubLogo from "../assets/github_logo.svg";
 import npmLogo from "../assets/npm_logo.webp";
 import InstallSection from "../components/InstallSection.tsx";
 import LogoSpace from "../components/LogoSpace.tsx";
+import MarkdownRender from "../components/markdown-render/markdown-render";
+import groqMd from "../content/groq.md?raw";
 ---
 
 <Layout>
@@ -56,12 +58,12 @@ import LogoSpace from "../components/LogoSpace.tsx";
 				</div>
 			</div>
 			<h1 class="text-3xl sm:text-4xl font-[450] mt-5">
-				Convensional commits <br />zero effort
+				Conventional commits <br />zero effort
 			</h1>
 			<p class="mt-4 text-foreground/70">
 				XOMMIT is a <span class="text-foreground font-medium"
 					>CLI tool</span
-				> that writes convensional commits from file diffs
+				> that writes conventional commits from file diffs
 			</p>
 
 			<h2
@@ -116,21 +118,22 @@ import LogoSpace from "../components/LogoSpace.tsx";
 				<CLIDemoSection client:load />
 
 				<div class="mt-20 space-y-5">
-					<h2 class="text-2xl">Install</h2>
+					<h2 class="text-3xl">Install</h2>
+					<MarkdownRender client:load content={groqMd} />
 					<InstallSection client:load />
 				</div>
 
 				<div class="mt-20 space-y-5">
-					<h2 class="text-2xl">Commands</h2>
-					<div class="space-y-2 text-md sm:text-base">
+					<h2 class="text-3xl">Commands</h2>
+					<div class="space-y-2 text-base">
 						<p>
 							xommit <span class="text-foreground/60"
 								>{"<"}your_message_here{">"}</span>
 						</p>
 						<p>
 							<span class="text-foreground/60"
-								>or just
-							</span>xommit <span class="text-foreground/60"
+								>or just 
+							</span> xommit <span class="text-foreground/60"
 								>works just fine</span>
 						</p>
 						<div class="w-full grid grid-cols-2 mt-6 gap-y-2.5">
@@ -153,7 +156,7 @@ import LogoSpace from "../components/LogoSpace.tsx";
 				</div>
 
 				<div class="mt-20">
-					<h2 class="text-2xl">How AI was used in this project</h2>
+					<h2 class="text-3xl">How AI was used in this project</h2>
 					<p class="mt-3 text-foreground/70">
 						I'm inspired by the black magic <a
 							href="https://x.com/RubenVeidt"

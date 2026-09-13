@@ -1,4 +1,4 @@
-Works on **Windows** (PowerShell 5.1+).
+Works on **Windows** (PowerShell 5.1+). Needs `git` installed.
 
 ```powershell
 irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.ps1 | iex

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import MarkdownRender from "./markdown-render/markdown-render";
 
-import npmMd from "../content/install/npm.md?raw";
-import curlMd from "../content/install/curl.md?raw";
-import powershellMd from "../content/install/powershell.md?raw";
-import manualMd from "../content/install/manual.md?raw";
+import npmMd from "../content/npm.md?raw";
+import curlMd from "../content/curl.md?raw";
+import powershellMd from "../content/powershell.md?raw";
+import manualMd from "../content/manual.md?raw";
 import { TransitionBox } from "./transition-box";
 
 const TABS = [
@@ -26,8 +26,9 @@ export default function InstallSection() {
   const activeIndex = TABS.findIndex(t => t.id === active);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 mt-10">
       <div className="flex gap-1.5 items-center sticky top-[57px] sm:top-[50px] z-15 bg-background py-1">
+      <span className="leading-[0.5em] text-[1.5rem] text-git mr-2">{">"}</span>
         {TABS.map((tab, index) => (
           <button
             key={index}

@@ -43,6 +43,14 @@ const SHIKI_LANGS: BuiltinLanguage[] = [
 const shikiHighlighter = await createHighlighter({
     themes: [SHIKI_THEME_LIGHT, SHIKI_THEME_DARK],
     langs: SHIKI_LANGS,
+    langAlias: {
+        terminal: 'bash',
+        cmd: 'bash',
+        powershell: 'bash',
+        pwsh: 'bash',
+        ps1: 'bash',
+        console: 'bash',
+    },
 });
 
 function rehypeShikiSync() {

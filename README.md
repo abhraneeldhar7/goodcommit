@@ -1,125 +1,135 @@
-# xommit - CLI Tool
+<p align="center">
+  <img src="https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/assets/heroImg.png" alt="XOMMIT - conventional commits, zero effort" width="760">
+</p>
 
-This folder contains the xommit command-line tool.
+<h1 align="center">xommit</h1>
+
+<p align="center"><strong>Conventional commits, zero effort.</strong></p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@abhraneeldhar7/xommit"><img src="https://img.shields.io/npm/v/@abhraneeldhar7/xommit?color=fa583b&label=npm" alt="npm version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/npm/l/@abhraneeldhar7/xommit?color=fa583b" alt="license"></a>
+  <img src="https://img.shields.io/badge/platform-windows%20%7C%20macOS%20%7C%20linux-fa583b" alt="platforms">
+  <a href="https://github.com/abhraneeldhar7/xommit/stargazers"><img src="https://img.shields.io/github/stars/abhraneeldhar7/xommit?color=fa583b" alt="stars"></a>
+</p>
 
 ## What is xommit?
 
-xommit takes a vague commit message like "fixed the login bug" and turns it into a proper Conventional Commit like "fix(auth): resolve login timeout on expired sessions". It uses the Groq API (an AI service) to generate three options, and you pick the best one.
+xommit is a small CLI that writes your git commits for you. You stage your files, type a vague message like `fixed the login bug`, and it reads the diff, asks Groq (a free AI API) for a few proper [Conventional Commits](https://www.conventionalcommits.org/), and lets you pick one. It then commits with the one you choose.
 
-## How does it work?
+It ships as a single C++ binary, around 3 MB, and runs on Windows, macOS and Linux.
 
-1. You run: `xommit "fixed the login bug"`
-2. The tool reads your staged git changes (the files you ran `git add` on)
-3. It sends your changes and your vague message to the Groq API
-4. The AI returns three conventional commit options
-5. You select one (numbered selection in standalone, arrow keys in npm)
-6. The tool runs `git commit` with your chosen message
+## How it works
 
-## How is it built?
+1. You stage some files with `git add`.
+2. You run `xommit "your vague message"`.
+3. xommit grabs the staged diff and sends it to Groq.
+4. The AI returns 3 conventional commit options.
+5. You pick one with the arrow keys and hit Enter.
+6. xommit runs `git commit` with your chosen message.
 
-The tool has two parts:
+## Install
 
-1. **C++ binary** (`src/main.cpp` + headers) - Handles the core logic:
-   - API call to Groq
-   - Git operations (diff, stat, commit)
-   - Key management (storage in appdata)
-   - Numbered selection UI
+Pick whichever fits your setup. The npm route is the easiest.
 
-2. **JS wrapper** (`lib/index.js`) - Handles npm delivery and fancy UI:
-   - Calls C++ binary with `--json` flag
-   - Shows arrow key selection with `>` icon
-   - Runs git commit
+**npm** (Windows, macOS, Linux)
 
-The C++ binary is ~200KB. The JS wrapper is ~5KB. Total package size is tiny.
-
-## How do I install it?
-
-Three options:
-
-### Option 1: npm (recommended)
-
-Requires Node.js installed.
-
-```
-cd cli-tool
-npm install -g .
+```bash
+npm install -g @abhraneeldhar7/xommit
 ```
 
-This makes the `xommit` command available everywhere on your system.
+Needs [Node.js](https://nodejs.org/) installed.
 
-### Option 2: curl installer (Linux/macOS)
+**curl** (macOS, Linux)
 
-Requires curl or wget.
-
-```
+```bash
 curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.sh | bash
 ```
 
-This downloads a standalone binary (no Node.js required) and installs it to `/usr/local/bin`.
+Downloads the standalone binary to `/usr/local/bin`.
 
-### Option 3: Manual build
+**PowerShell** (Windows)
 
-Requires g++ compiler.
-
-```
-cd cli-tool
-node scripts/build.js
-# or manually:
-g++ -std=c++17 -O2 -I include -o bin/xommit src/main.cpp -lcurl
+```powershell
+irm https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.ps1 | iex
 ```
 
-Then copy `bin/xommit` to a directory in your PATH.
+Installs `xommit.exe` to `%LOCALAPPDATA%\Programs\xommit` and adds it to your PATH. Restart your terminal after.
 
-## Setup
+**Manual** (build from source) — see [Build from source](#build-from-source).
 
-After installing, set your Groq API key:
+All of the installers expect `git` to already be installed.
 
+## Connect your Groq key
+
+xommit uses [Groq](https://groq.com) under the hood, which is free. You just need an API key:
+
+1. Create an account at [console.groq.com](https://console.groq.com).
+2. Open [console.groq.com/keys](https://console.groq.com/keys) and hit **Create API Key**.
+3. Copy the key (it starts with `gsk_` and is shown only once).
+4. Run `xommit --connect` and paste it in.
+
+```bash
+xommit --connect
 ```
-xommit --key add
-```
 
-This stores your key at:
-- Windows: `%APPDATA%\xommit\key`
-- Linux/macOS: `~/.config/xommit/key`
+Your key is stored locally and is only ever used to talk to Groq.
 
 ## Usage
 
-```
-xommit "your vague commit message"
-xommit --print "your vague message"    # just print, don't commit
-xommit --key add                        # store API key
-xommit --key remove                     # remove stored key
-xommit --help                           # show help
-xommit --test                           # test UI (DEV mode only)
+```bash
+git add .
+xommit "fixed the login bug"
 ```
 
-## Environment configuration
+Don't have a message in mind? Just run `xommit` and it'll generate options from the diff.
 
-The tool supports environment configuration through a `.env` file.
+## Commands
 
-### DEV mode
+| Command | What it does |
+| --- | --- |
+| `xommit "<message>"` | Generate commit options and commit |
+| `xommit --help` | Show the tutorial |
+| `xommit --connect` | Save or update your Groq API key |
+| `xommit --reset` | Remove your stored key |
+| `xommit --update` | Download the latest release from GitHub |
+| `xommit --version` | Show the version |
 
-When `ENV=DEV`, the `--test` flag becomes available. This lets you test the UI without calling the API or needing staged files.
+## Build from source
+
+You'll need [Git](https://git-scm.com/), [Node.js](https://nodejs.org/) and a C++20 compiler (g++ or clang++).
+
+```bash
+git clone https://github.com/abhraneeldhar7/xommit.git
+cd xommit/cli-tool
+node scripts/build.js
+```
+
+The binary lands in `bin/`:
+
+- Windows: `bin/xommit.exe`
+- Linux: `bin/xommit`
+- macOS: `bin/xommit-macos`
+
+Drop it somewhere on your PATH and you're good to go.
+
+## Project structure
 
 ```
-cp .env.example .env
-# Edit .env and uncomment ENV=DEV
-xommit --test
+cli-tool/   the C++ CLI, plus the build and install scripts
+webapp/     the website (Astro + Tailwind)
+assets/     images
+.github/    release workflow (builds binaries on every v* tag)
 ```
 
-## Folder structure
+## Website
 
-- `include/xommit/` - C++ header files (the core logic)
-  - `prompt.h` - AI instruction text
-  - `json.h` - JSON escaping and parsing
-  - `key_manager.h` - API key storage
-  - `http_client.h` - HTTPS requests to Groq API
-  - `git_utils.h` - Git operations
-  - `terminal_ui.h` - Terminal UI (spinner, selection)
-- `src/main.cpp` - C++ entry point
-- `lib/index.js` - JS wrapper for npm delivery
-- `bin/` - Compiled binaries (gitignored)
-- `scripts/` - Build and install scripts
-- `tests/` - Basic tests
-- `CMakeLists.txt` - CMake build configuration
-- `package.json` - npm package configuration
+There's a site with a live demo and the same install guide: [xommit.antk.in](https://xommit.antk.in).
+
+## A note on how this was built
+
+I'm inspired by the black magic [@ruben](https://x.com/RubenVeidt) does on Twitter. Wanted to move past the DSA questions, so I used AI to set up the skeleton and then iterated on it. I'm using this project to learn C++ properly, and I wanted to share a tool I actually use.
+
+## License
+
+MIT

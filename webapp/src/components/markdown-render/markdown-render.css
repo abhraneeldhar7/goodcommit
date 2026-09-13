@@ -11,7 +11,7 @@
     font-size: 15px;
     /* font-size: 17px; */
     line-height: 2;
-    margin: 0 0 0.9em;
+    margin: 0 0 0.8em;
     /* opacity: 0.8; */
 }
 
@@ -172,7 +172,7 @@
 }
 
 .markdownDiv a strong {
-    font-weight: 600 !important;
+    font-weight: 500 !important;
     color: var(--foreground);
 }
 
@@ -180,12 +180,12 @@
 
 /* Inline Code */
 .markdownDiv :not(pre)>code {
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: 500 !important;
     background-color: var(--muted) !important;
     color: var(--foreground, #1a1a1a) !important;
-    padding: 0.35em 0.6em;
-    border-radius: 4px;
+    padding: 0.3em 0.6em;
+    border-radius: 5px;
     margin: 1.5em 0;
     white-space: normal;
     word-break: break-word;
@@ -231,7 +231,7 @@
 
 .markdownDiv .markdownCodeBlock {
     position: relative;
-    margin: 1.5em 0;
+    margin-bottom: 1.5em;
     border-radius: 12px;
     border: 1px solid var(--border);
     overflow: hidden;
@@ -241,7 +241,7 @@
 }
 
 .markdownCodeBlockHeader {
-    padding: 4px 0.5em;
+    padding: 4px 2px;
     padding-left: 0.7em;
     display: flex;
     align-items: center;
@@ -250,9 +250,8 @@
 }
 
 .markdownCodeBlockLanguage {
-    font-size: 0.9em;
+    font-size: 0.8em;
     line-height: 1em;
-    font-weight: 500;
     padding-bottom: 2px;
 }
 
@@ -307,7 +306,7 @@
 }
 
 .markdownDiv strong {
-    font-weight: 600 !important;
+    font-weight: 450 !important;
     color: var(--foreground);
 }
 

@@ -21,6 +21,7 @@ const fs = require("fs");
 const os = require("os");
 
 const config = require("../config.json");
+const pkg = require("../package.json");
 
 const srcDir = path.join(__dirname, "..", "src");
 const includeDir = path.join(__dirname, "..", "include");
@@ -57,7 +58,7 @@ if (platform === "win32") {
 }
 
 const defines = [
-  `-DXOMMIT_VERSION="${config.version}"`,
+  `-DXOMMIT_VERSION="${pkg.version}"`,
   `-DXOMMIT_GITHUB="${config.github}"`,
   `-DXOMMIT_WEBSITE="${config.website}"`,
   `-DXOMMIT_ASSET_WIN="${config.assets.win32}"`,

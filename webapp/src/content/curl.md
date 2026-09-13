@@ -1,6 +1,6 @@
-Works on **Linux** and **macOS**. Requires `curl` or `wget`.
+Works on **Linux** and **macOS**. You need `curl` or `wget` (and `git` installed).
 
-```bash
+```terminal
 curl -fsSL https://raw.githubusercontent.com/abhraneeldhar7/xommit/main/cli-tool/scripts/install.sh | bash
 ```
 
@@ -16,6 +16,6 @@ What it does:
 
 Verify:
 
-```bash
+```terminal
 xommit --version
 ```
