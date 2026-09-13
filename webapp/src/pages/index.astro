@@ -1,90 +1,118 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Demo from '../components/Demo.astro';
-import InstallTabs from '../components/InstallTabs.astro';
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import Demo from "../components/Demo.tsx";
+import GithubLogo from "../assets/github_logo.svg";
+import npmLogo from "../assets/npm_logo.webp";
+import InstallSection from "../components/InstallSection.tsx";
 ---
 
 <Layout>
-	<main class="page">
-		<header class="hero">
-			<h1>Xommit</h1>
-			<p class="tagline">Consistent commits, zero effort.</p>
-			<p class="blurb">
-				Type a vague message — xommit reads your staged changes, generates
-				conventional commit options, and commits for you.
+	<main class="px-4 relative">
+		<div
+			class="fixed top-0 left-0 w-full z-3 px-4 backdrop-blur-[20px] bg-[background]/40"
+		>
+			<div
+				class="mx-auto max-w-[760px] w-full flex items-center justify-between py-2"
+			>
+				<p class="text-sm font-light text-foreground/80">
+					Written in C++ <span class="opacity-70 mx-1">|</span> 3mb
+				</p>
+				<div class="flex gap-1 items-center">
+					<a
+						href="https://github.com/abhraneeldhar7/xommit"
+						target="_blank"
+						class="w-fit transition-all hover:bg-muted p-2 rounded-xs"
+					>
+						<Image
+							src={GithubLogo}
+							alt="github_logo"
+							class="object-contain h-[25px] sm:h-[18px] w-fit"
+							quality={100}
+						/>
+					</a>
+					<a
+						href="https://www.npmjs.com/package/@abhraneeldhar7/xommit"
+						target="_blank"
+						class="w-fit transition-all hover:bg-muted p-2 px-2.5 rounded-xs"
+					>
+						<Image
+							src={npmLogo}
+							alt="npm_logo"
+							class="object-contain h-[25px] sm:h-[18px] w-fit"
+							quality={100}
+						/>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="mx-auto max-w-[760px] w-full pt-45">
+			<div class="flex items-end opacity-25">
+				<span class="text-xl leading-[0.8em]">{">"}</span>
+				<div
+					class="h-[3px] w-3 bg-foreground animate-[pulse_800ms_ease-in-out_infinite]"
+				>
+				</div>
+			</div>
+			<h1 class="text-4xl font-[450] mt-5">
+				Convensional commits <br />zero effort
+			</h1>
+			<p class="mt-4 text-foreground/70">
+				XOMMIT is a <span class="text-foreground font-medium"
+					>CLI tool</span
+				> that writes convensional commits from file diffs
 			</p>
-		</header>
 
-		<section class="demo" aria-label="Xommit in action">
-			<Demo />
-		</section>
+			<h2 class="font-mono text-sm leading-tight mt-15">
+				<span class="text-git">██╗&nbsp;&nbsp;██╗</span><span
+					>&nbsp;&nbsp;██████╗&nbsp;&nbsp;███╗&nbsp;&nbsp;&nbsp;███╗&nbsp;███╗&nbsp;&nbsp;&nbsp;███╗&nbsp;██╗&nbsp;████████╗</span
+				><br />
+				<span class="text-git">╚██╗██╔╝</span><span
+					>&nbsp;██╔═══██╗&nbsp;████╗&nbsp;████║&nbsp;████╗&nbsp;████║&nbsp;██║&nbsp;╚══██╔══╝</span
+				><br />
+				<span class="text-git">&nbsp;╚███╔╝&nbsp;</span><span
+					>&nbsp;██║&nbsp;&nbsp;&nbsp;██║&nbsp;██╔████╔██║&nbsp;██╔████╔██║&nbsp;██║&nbsp;&nbsp;&nbsp;&nbsp;██║&nbsp;&nbsp;&nbsp;</span
+				><br />
+				<span class="text-git">&nbsp;██╔██╗&nbsp;</span><span
+					>&nbsp;██║&nbsp;&nbsp;&nbsp;██║&nbsp;██║╚██╔╝██║&nbsp;██║╚██╔╝██║&nbsp;██║&nbsp;&nbsp;&nbsp;&nbsp;██║&nbsp;&nbsp;&nbsp;</span
+				><br />
+				<span class="text-git">██╔╝&nbsp;██╗</span><span
+					>&nbsp;╚██████╔╝&nbsp;██║&nbsp;╚═╝&nbsp;██║&nbsp;██║&nbsp;╚═╝&nbsp;██║&nbsp;██║&nbsp;&nbsp;&nbsp;&nbsp;██║&nbsp;&nbsp;&nbsp;</span
+				><br />
+				<span class="text-git">╚═╝&nbsp;&nbsp;╚═╝</span><span
+					>&nbsp;&nbsp;╚═════╝&nbsp;&nbsp;╚═╝&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╚═╝&nbsp;╚═╝&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;╚═╝&nbsp;╚═╝&nbsp;&nbsp;&nbsp;&nbsp;╚═╝&nbsp;&nbsp;&nbsp;</span
+				>
+			</h2>
+			<div class="my-10 space-y-10">
+				<Demo client:load />
 
-		<section class="install-section" aria-label="Install">
-			<h2>Install</h2>
-			<InstallTabs />
-		</section>
+				<div class="space-y-5">
+					<h2 class="text-2xl">Install</h2>
+					<InstallSection client:load />
+				</div>
+			</div>
+		</div>
 
-		<footer>
-			<p>xommit · MIT</p>
-		</footer>
+		<!-- <header>
+      <h1 class="m-0 text-[2.8em] leading-[1.1] tracking-tight text-balance">Xommit</h1>
+      <p class="mt-1 text-[1.25em] text-muted text-balance">Consistent commits, zero effort.</p>
+      <p class="mt-4 max-w-[34em] text-muted">
+        Type a vague message — xommit reads your staged changes, generates
+        conventional commit options, and commits for you.
+      </p>
+    </header>
+
+    <section class="mt-14 pt-8 border-t border-black/8" aria-label="Xommit in action">
+      <Demo />
+    </section>
+
+    <section class="mt-14 pt-8 border-t border-black/8" aria-label="Install">
+      <h2 class="m-0 mb-3 text-[1.4em] font-semibold">Install</h2>
+      <InstallTabs client:load />
+    </section>
+
+    <footer class="mt-16 pt-6 border-t border-black/8">
+      <p class="m-0 text-faint text-sm">xommit · MIT</p>
+    </footer> -->
 	</main>
 </Layout>
-
-<style>
-	.page {
-		max-width: 42em;
-		margin: 0 auto;
-		padding: 6em 1.5em 3em;
-	}
-
-	.hero h1 {
-		margin: 0;
-		font-size: 2.8em;
-		line-height: 1.1;
-		letter-spacing: -0.02em;
-		text-wrap: balance;
-	}
-
-	.hero .tagline {
-		margin: 0.2em 0 0;
-		font-size: 1.25em;
-		color: var(--muted);
-		text-wrap: balance;
-	}
-
-	.hero .blurb {
-		margin: 1em 0 0;
-		max-width: 34em;
-		color: var(--muted);
-	}
-
-	.demo {
-		margin-top: 3.5em;
-		padding-top: 2em;
-		border-top: 1px solid rgba(0, 0, 0, 0.08);
-	}
-
-	.install-section {
-		margin-top: 3.5em;
-		padding-top: 2em;
-		border-top: 1px solid rgba(0, 0, 0, 0.08);
-	}
-
-	.install-section h2 {
-		margin: 0 0 0.75em;
-		font-size: 1.4em;
-		font-weight: 600;
-	}
-
-	footer {
-		margin-top: 4em;
-		padding-top: 1.5em;
-		border-top: 1px solid rgba(0, 0, 0, 0.08);
-	}
-
-	footer p {
-		margin: 0;
-		color: var(--faint);
-		font-size: 14px;
-	}
-</style>
