@@ -8,6 +8,7 @@
 }
 
 .markdownDiv p {
+    font-size: 15px;
     /* font-size: 17px; */
     line-height: 2;
     margin: 0 0 0.9em;

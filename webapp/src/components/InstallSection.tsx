@@ -23,10 +23,11 @@ const CONTENT: Record<string, string> = {
 
 export default function InstallSection() {
   const [active, setActive] = useState<"npm" | "curl" | "powershell" | "manual">("npm");
+  const activeIndex = TABS.findIndex(t => t.id === active);
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-1.5 items-center">
+      <div className="flex gap-1.5 items-center sticky top-[55px] z-15 bg-background py-1">
         {TABS.map((tab, index) => (
           <button
             key={index}
@@ -39,12 +40,15 @@ export default function InstallSection() {
         ))}
       </div>
 
-      <div className="relative h-full">
+      <div className="relative overflow-hidden">
+        <div className="invisible">
+          <MarkdownRender content={CONTENT[active]} />
+        </div>
         {TABS.map((tab, i) => (
           <TransitionBox
             key={tab.id}
             activationIndex={i}
-            currentIndex={TABS.findIndex(t => t.id === active)}
+            currentIndex={activeIndex}
           >
             <MarkdownRender content={CONTENT[tab.id]} />
           </TransitionBox>

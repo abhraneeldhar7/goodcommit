@@ -7,7 +7,7 @@ import path from 'path';
 // https://astro.build/config
 export default defineConfig({
     integrations: [react()],
-    server: { port: 3000 },
+    server: { port: 3000, allowedHosts: ["yearlong-jon-patrilineal.ngrok-free.dev"] },
     vite: {
         plugins: [tailwindcss()],
         resolve: {

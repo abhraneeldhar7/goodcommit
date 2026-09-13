@@ -15,12 +15,12 @@ export function TransitionBox({
   return (
     <div
       className={cn(
-        "absolute inset-0 w-full h-full transition-all will-change-all ease-out",
+        "absolute inset-0 transition-all will-change-transform ease-out",
         active
-          ? "translate-x-0 opacity-100"
+          ? "translate-x-0 opacity-100 z-10"
           : activationIndex > currentIndex
-            ? "translate-x-[30%] opacity-0"
-            : "-translate-x-[30%] opacity-0",
+            ? "translate-x-[30%] opacity-0 z-0 pointer-events-none"
+            : "-translate-x-[30%] opacity-0 z-0 pointer-events-none",
         className
       )}
     >
