@@ -88,7 +88,7 @@ static int cmd_help()
               << std::flush;
 
     std::cout << "How to use:\n";
-    std::cout << BOLD_COLOR << "xommit" << DIM_COLOR << " <your_vague_message_here>\n ";
+    std::cout << BOLD_COLOR << "xommit" << DIM_COLOR << " <your_vague_message_here>\n";
     std::cout << "or just" << BOLD_COLOR << RESET_COLOR << " xommit" << "\n\n";
 
     // std::cout<<"(make sure you have some staged files)";
