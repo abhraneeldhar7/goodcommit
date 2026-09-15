@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/assets/heroImg.png" alt="XOMMIT - conventional commits, zero effort" width="760">
+  <img src="/webapp/public/og-image.png" alt="XOMMIT - conventional commits, zero effort" width="760">
 </p>
 
 <h1 align="center">xommit</h1>

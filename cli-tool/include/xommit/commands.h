@@ -193,7 +193,7 @@ static int cmd_update()
 
     std::error_code size_ec;
     auto dl_size = std::filesystem::file_size(new_path, size_ec);
-    if (size_ec || dl_size < 100000)
+    if (size_ec || dl_size < 10000)
     {
         std::filesystem::remove(new_path, ec);
         return fail("Error: downloaded file looks invalid");
